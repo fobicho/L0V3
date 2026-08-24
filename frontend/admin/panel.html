@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+  <div class="floating-hearts">
+    <span>♡</span><span>✩</span><span>✧</span><span>☽</span><span>❀</span>
+    <span>(˶˃𐃷˂˶)</span><span>୨ৎ</span><span>꩜</span><span>✿</span><span>𐙚</span>
+  </div>
+
+  <button class="logout-fixed" onclick="logout()">Cerrar sesión</button>
+
+  <div class="container">
+    <div class="panel-header">
+      <h2>Cartitas</h2>
+      <div class="panel-actions">
+        <button class="btn btn-primary btn-small" onclick="openModal()">+ Nueva Carta</button>
+      </div>
+    </div>
+
+    <div id="panel-list" class="panel-list">
+      <div class="loading"><div class="loading-heart">💌</div><p>Cargando cartas...</p></div>
+    </div>
+  </div>
+
+  <!-- Modal crear/editar -->
+  <div id="modal-overlay" class="admin-modal-overlay">
+    <div class="modal">
+      <h3 id="modal-title">Nueva Carta</h3>
+      <form id="letter-form">
+        <div class="form-group">
+          <label for="input-title">Título</label>
+          <input type="text" id="input-title" placeholder="Ej: Para mi amor..." required>
+        </div>
+        <div class="form-group">
+          <label for="input-content">Contenido</label>
+          <textarea id="input-content" placeholder="Escribe tu carta aquí..."></textarea>
+        </div>
+        <input type="hidden" id="edit-id">
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal confirmar eliminar -->
+  <div id="confirm-overlay" class="admin-modal-overlay">
+    <div class="modal">
+      <div class="confirm-box">
+        <h3>Eliminar carta</h3>
+        <p>¿Seguro que quieres eliminar esta carta? Esta acción no se puede deshacer.</p>
+        <input type="hidden" id="delete-id">
+        <div class="confirm-actions">
+          <button class="btn btn-secondary" onclick="closeConfirm()">Cancelar</button>
+          <button class="btn btn-danger" onclick="confirmDelete()">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

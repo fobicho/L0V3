@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buzón</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <div class="floating-hearts">
+    <span>♡</span><span>✩</span><span>✧</span><span>☽</span><span>❀</span>
+    <span>(˶˃𐃷˂˶)</span><span>୨ৎ</span><span>꩜</span><span>✿</span><span>𐙚</span>
+  </div>
+
+  <div class="letter-container">
+    <a href="cartas.html" class="back-btn">← Volver</a>
+
+    <div id="letter-content">
+      <div class="loading"><div class="loading-heart">💌</div><p>Cargando carta...</p></div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    async function loadLetter() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      if (!id) { window.location.href = 'cartas.html'; return; }
+      localStorage.setItem('read_' + id, '1');
+
+      const container = document.getElementById('letter-content');
+      try {
+        const letter = await apiPublic(`/letters/${id}`);
+
+        container.innerHTML = `
+          <div class="letter-paper">
+            <div class="letter-header">
+              <h1 class="letter-title">${letter.title}</h1>
+              <div class="letter-divider"></div>
+            </div>
+            <div class="letter-content">${letter.content}</div>
+            <div class="letter-footer">
+              <div class="letter-divider"></div>
+              <span class="letter-date">${formatDate(letter.createdAt)}</span>
+            </div>
+          </div>
+        `;
+        document.title = `${letter.title} — Cartas para mi Novia`;
+      } catch (err) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-emoji">😢</div>
+            <h3>Carta no encontrada</h3>
+            <p>${err.message}</p>
+          </div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadLetter);
+  </script>
+</body>
+</html>

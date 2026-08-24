@@ -1,0 +1,97 @@
+/* Floating hearts */
+.floating-hearts {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.floating-hearts span {
+  position: absolute;
+  bottom: -50px;
+  font-size: 1.5rem;
+  opacity: 0.3;
+  animation: floatUp linear infinite;
+}
+
+.floating-hearts span:nth-child(1) { left: 5%; animation-duration: 12s; animation-delay: 0s; font-size: 1.2rem; }
+.floating-hearts span:nth-child(2) { left: 15%; animation-duration: 15s; animation-delay: 2s; font-size: 1.8rem; }
+.floating-hearts span:nth-child(3) { left: 25%; animation-duration: 10s; animation-delay: 4s; font-size: 1rem; }
+.floating-hearts span:nth-child(4) { left: 35%; animation-duration: 14s; animation-delay: 1s; font-size: 1.5rem; }
+.floating-hearts span:nth-child(5) { left: 50%; animation-duration: 11s; animation-delay: 3s; font-size: 1.3rem; }
+.floating-hearts span:nth-child(6) { left: 65%; animation-duration: 13s; animation-delay: 5s; font-size: 1.7rem; }
+.floating-hearts span:nth-child(7) { left: 75%; animation-duration: 16s; animation-delay: 0.5s; font-size: 1.1rem; }
+.floating-hearts span:nth-child(8) { left: 85%; animation-duration: 12s; animation-delay: 2.5s; font-size: 1.6rem; }
+.floating-hearts span:nth-child(9) { left: 92%; animation-duration: 14s; animation-delay: 4.5s; font-size: 1.4rem; }
+.floating-hearts span:nth-child(10) { left: 45%; animation-duration: 11s; animation-delay: 1.5s; font-size: 1rem; }
+
+/* Keyframes */
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.2); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.15); }
+  60% { transform: scale(1); }
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(15deg); }
+}
+
+

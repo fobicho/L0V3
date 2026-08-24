@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+  <div class="floating-hearts">
+    <span>♡</span><span>✩</span><span>✧</span><span>☽</span><span>❀</span>
+    <span>(˶˃𐃷˂˶)</span><span>୨ৎ</span><span>꩜</span><span>✿</span><span>𐙚</span>
+  </div>
+
+  <div class="login-container">
+    <div class="login-box">
+
+      <div id="error-msg" class="error-msg"></div>
+
+      <form id="login-form">
+        <div class="form-group login-field">
+          <input type="text" id="secret" placeholder=" ">
+          <label for="secret">Tu código secreto</label>
+        </div>
+        <button type="submit" class="btn btn-primary">-Ingresar-</button>
+      </form>
+
+      <p id="hint-text" class="hint-text">Es nuestra fecha de aniversario (formato: DD/MM/AAAA)</p>
+    </div>
+  </div>
+
+  <button class="pista-fixed" id="pista-btn">Pista</button>
+
+  <script src="../js/api.js"></script>
+  <script>
+    let pistaCount = 0;
+    const pistaBtn = document.getElementById('pista-btn');
+    const hintText = document.getElementById('hint-text');
+
+    pistaBtn.addEventListener('click', () => {
+      pistaCount++;
+      const pop = document.createElement('div');
+      pop.className = 'click-popup';
+      pop.textContent = pistaCount;
+
+      const rect = pistaBtn.getBoundingClientRect();
+      const offsetX = Math.random() * 110;
+      const offsetY = Math.random() * 90;
+      pop.style.left = (rect.left + offsetX) + 'px';
+      pop.style.top = (rect.top - 24 - offsetY) + 'px';
+
+      document.body.appendChild(pop);
+      setTimeout(() => pop.remove(), 1000);
+
+      if (pistaCount === 25) {
+        showPistaMessage('¡Tu puedes llegar a 100!');
+      }
+
+      if (pistaCount >= 100) {
+        hintText.classList.add('show');
+      }
+    });
+
+    function showPistaMessage(text) {
+      const msg = document.createElement('div');
+      msg.className = 'pista-msg';
+      msg.textContent = text;
+
+      const rect = pistaBtn.getBoundingClientRect();
+      msg.style.left = (rect.right + 24) + 'px';
+      msg.style.top = (rect.top - 10) + 'px';
+
+      document.body.appendChild(msg);
+      setTimeout(() => msg.remove(), 2500);
+    }
+
+    if (getToken()) {
+      window.location.href = getRole() === 'admin' ? 'panel.html' : '../index.html';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const secret = document.getElementById('secret').value;
+      const errorEl = document.getElementById('error-msg');
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ secret })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorEl.textContent = data.error || 'Error al iniciar sesión';
+          errorEl.classList.add('show');
+          return;
+        }
+
+        setToken(data.token);
+        setRole(data.role);
+        window.location.href = data.role === 'admin' ? 'panel.html' : '../index.html';
+      } catch (err) {
+        errorEl.textContent = 'Error de conexión';
+        errorEl.classList.add('show');
+      }
+    });
+  </script>
+</body>
+</html>
