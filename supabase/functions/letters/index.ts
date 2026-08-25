@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 
-const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const PROJECT_URL = Deno.env.get("PROJECT_URL")!;
+const SERVICE_ROLE_KEY = Deno.env.get("SERVICE_ROLE_KEY")!;
 const JWT_SECRET = Deno.env.get("JWT_SECRET")!;
 
 const corsHeaders = {
@@ -47,7 +47,7 @@ async function supabaseRequest(
   method: string,
   body?: unknown
 ): Promise<{ data: unknown; error: string | null; status: number }> {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+  const res = await fetch(`${PROJECT_URL}/rest/v1/${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",
