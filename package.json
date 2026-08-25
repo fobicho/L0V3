@@ -1,16 +1,9 @@
 {
-  "name": "love-letters-backend",
-  "version": "1.0.0",
-  "description": "Backend para almacenar cartas de amor con historial",
-  "main": "src/index.js",
+  "name": "love-letters",
+  "version": "2.0.0",
+  "description": "Cartas de amor — Cloudflare Pages + Supabase",
+  "private": true,
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^17.4.2",
-    "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.3"
+    "dev": "npx serve frontend -p 3000"
   }
 }

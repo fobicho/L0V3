@@ -1,5 +1,5 @@
-if (!getToken() || getRole() !== 'admin') {
-  window.location.href = 'login.html';
+if (!getToken() || !isAdmin()) {
+  window.location.href = '/acceso';
 }
 
 let currentLetters = [];
@@ -7,7 +7,14 @@ let currentLetters = [];
 async function loadPanel() {
   const list = document.getElementById('panel-list');
   try {
-    currentLetters = await apiAuth('/letters');
+    const { data, error } = await _supabase
+      .from('letters')
+      .select('id, title, content, mood, created_at, updated_at')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    currentLetters = data;
+
     if (currentLetters.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
@@ -23,7 +30,7 @@ async function loadPanel() {
           <div class="panel-card-info">
             <div class="panel-card-title">${letter.title}</div>
             <div class="panel-card-preview">${letter.content}</div>
-            <div class="panel-card-date">${formatDate(letter.createdAt)}</div>
+            <div class="panel-card-date">${formatDate(letter.created_at)}</div>
           </div>
           <div class="panel-card-actions">
             <button class="btn btn-secondary btn-small" onclick="openModal('${letter.id}')">✏️ Editar</button>
@@ -36,7 +43,7 @@ async function loadPanel() {
       <div class="empty-state">
         <div class="empty-state-emoji">😢</div>
         <h3>Error</h3>
-        <p>${err.message}</p>
+        <p>${err.message || err}</p>
       </div>`;
   }
 }
@@ -76,6 +83,21 @@ function closeConfirm() {
   document.getElementById('confirm-overlay').classList.remove('show');
 }
 
+async function apiWrite(path, method, body) {
+  const token = getToken();
+  const res = await fetch(LETTERS_FUNCTION_URL + path, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error del servidor');
+  return data;
+}
+
 document.getElementById('letter-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const id = document.getElementById('edit-id').value;
@@ -86,9 +108,9 @@ document.getElementById('letter-form').addEventListener('submit', async (e) => {
 
   try {
     if (id) {
-      await apiAuth(`/letters/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+      await apiWrite('/letters/' + id, 'PUT', body);
     } else {
-      await apiAuth('/letters', { method: 'POST', body: JSON.stringify(body) });
+      await apiWrite('/letters', 'POST', body);
     }
     closeModal();
     loadPanel();
@@ -100,7 +122,7 @@ document.getElementById('letter-form').addEventListener('submit', async (e) => {
 async function confirmDelete() {
   const id = document.getElementById('delete-id').value;
   try {
-    await apiAuth(`/letters/${id}`, { method: 'DELETE' });
+    await apiWrite('/letters/' + id, 'DELETE');
     closeConfirm();
     loadPanel();
   } catch (err) {

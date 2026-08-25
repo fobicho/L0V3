@@ -33,7 +33,7 @@ function updateCounter() {
 }
 
 function buildSidebar(activePage) {
-  const page = activePage || (location.pathname.endsWith('cartas.html') ? 'cartas' : 'inicio');
+  const page = activePage || (location.pathname === '/cartas' ? 'cartas' : 'inicio');
   return `
   <aside class="sidebar">
     <div class="sidebar-counter">
@@ -48,8 +48,8 @@ function buildSidebar(activePage) {
       </div>
     </div>
     <nav class="sidebar-nav">
-      <a href="index.html" class="nav-link ${page === 'inicio' ? 'active' : ''}">Inicio</a>
-      <a href="cartas.html" class="nav-link ${page === 'cartas' ? 'active' : ''}">Buzón</a>
+      <a href="/" class="nav-link ${page === 'inicio' ? 'active' : ''}">Inicio</a>
+      <a href="/cartas" class="nav-link ${page === 'cartas' ? 'active' : ''}">Buzón</a>
     </nav>
   </aside>`;
 }
@@ -63,15 +63,15 @@ function initLayout(path) {
   const hasSidebar = !!document.querySelector('.sidebar');
   const hasLogout = !!document.querySelector('.logout-fixed');
 
-  const page = (path || location.pathname).endsWith('cartas.html') ? 'cartas' : 'inicio';
+  const page = (path || location.pathname) === '/cartas' ? 'cartas' : 'inicio';
   if (!hasSidebar) {
     document.body.insertAdjacentHTML('afterbegin', buildSidebar(page));
   } else {
     document.querySelectorAll('.nav-link').forEach(link => {
       const href = link.getAttribute('href');
       link.classList.toggle('active',
-        (page === 'inicio' && href === 'index.html') ||
-        (page === 'cartas' && href === 'cartas.html')
+        (page === 'inicio' && href === '/') ||
+        (page === 'cartas' && href === '/cartas')
       );
     });
   }
@@ -87,7 +87,7 @@ function initLayout(path) {
 }
 
 function runPageScripts(path) {
-  if (path.endsWith('letter.html') && typeof loadLetter === 'function') {
+  if (path === '/carta' && typeof loadLetter === 'function') {
     loadLetter();
   }
 }

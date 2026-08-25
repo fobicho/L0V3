@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function getToken() {
   return localStorage.getItem('token');
@@ -23,31 +23,23 @@ function setRole(role) {
 function logout() {
   clearToken();
   localStorage.removeItem('role');
-  window.location.href = '/admin/login.html';
+  window.location.href = '/acceso';
 }
 
-async function apiPublic(path) {
-  const res = await fetch(`${API_BASE}${path}`);
-  if (!res.ok) throw new Error(`Error ${res.status}`);
-  return res.json();
+function parseJWT(token) {
+  try {
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+  } catch {
+    return null;
+  }
 }
 
-async function apiAuth(path, options = {}) {
+function isAdmin() {
   const token = getToken();
-  const headers = { 'Content-Type': 'application/json', ...options.headers };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  if (res.status === 401) {
-    clearToken();
-    window.location.href = '/admin/login.html';
-    throw new Error('No autenticado');
-  }
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.error || `Error ${res.status}`);
-  }
-  return res.json();
+  if (!token) return false;
+  const payload = parseJWT(token);
+  return payload && payload.role === 'admin' && payload.exp * 1000 > Date.now();
 }
 
 function formatDate(iso) {
@@ -58,4 +50,17 @@ function formatDate(iso) {
 function formatDateTime(iso) {
   const d = new Date(iso);
   return d.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+async function login(secret) {
+  const res = await fetch(AUTH_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ secret })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error al iniciar sesión');
+  setToken(data.token);
+  setRole(data.role);
+  return data;
 }
