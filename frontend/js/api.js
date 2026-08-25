@@ -55,7 +55,7 @@ function formatDateTime(iso) {
 async function login(secret) {
   const res = await fetch(AUTH_FUNCTION_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
     body: JSON.stringify({ secret })
   });
   const data = await res.json();
