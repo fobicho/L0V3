@@ -144,6 +144,12 @@ async function navigateTo(href, push) {
   }
 }
 
+if (location.pathname !== '/acceso' && location.pathname !== '/admin') {
+  if (!getToken()) {
+    location.href = '/acceso';
+  }
+}
+
 initLayout();
 
 document.addEventListener('click', e => {
