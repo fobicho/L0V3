@@ -24,12 +24,8 @@ CREATE TABLE letter_history (
 ALTER TABLE letters ENABLE ROW LEVEL SECURITY;
 ALTER TABLE letter_history ENABLE ROW LEVEL SECURITY;
 
--- Public read access (anyone can read letters)
-CREATE POLICY "Public read letters" ON letters
-  FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read letters" ON letters;
+DROP POLICY IF EXISTS "Public read history" ON letter_history;
 
-CREATE POLICY "Public read history" ON letter_history
-  FOR SELECT USING (true);
-
--- Write access only via service_role (Edge Functions use service_role key)
--- The anon key CANNOT write — this is enforced by RLS with no INSERT/UPDATE/DELETE policies
+-- Las lecturas y escrituras pasan por Edge Functions con autorización JWT.
+-- No se crean políticas para anon/authenticated: RLS bloquea el acceso directo.

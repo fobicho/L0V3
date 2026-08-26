@@ -96,11 +96,20 @@
     function goAfterLogin(data) {
       let target = null;
       try { target = sessionStorage.getItem('redirectAfterLogin'); } catch {}
-      if (target) {
-        try { sessionStorage.removeItem('redirectAfterLogin'); } catch {}
-        window.location.href = target;
+      try { sessionStorage.removeItem('redirectAfterLogin'); } catch {}
+
+      if (data.role === 'admin') {
+        if (target && target.startsWith('/admin')) {
+          window.location.href = target;
+        } else {
+          window.location.href = '/admin';
+        }
       } else {
-        window.location.href = data.role === 'admin' ? '/admin' : '/';
+        if (target && !target.startsWith('/admin')) {
+          window.location.href = target;
+        } else {
+          window.location.href = '/';
+        }
       }
     }
 

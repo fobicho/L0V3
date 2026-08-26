@@ -20,13 +20,8 @@ window.openLetterModal = function(id) {
     if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', handler); }
   });
 
-  _supabase.from('letters')
-    .select('id, title, content, mood, created_at, updated_at')
-    .eq('id', id)
-    .single()
-    .then(function(result) {
-      if (result.error) throw result.error;
-      var letter = result.data;
+  apiRead('/' + encodeURIComponent(id))
+    .then(function(letter) {
       var body = overlay.querySelector('.modal-body');
       body.innerHTML =
         '<div class="letter-paper">' +
@@ -54,12 +49,8 @@ window.loadLetters = function() {
   var grid = document.getElementById('letters-grid');
   if (!grid) return;
 
-  _supabase.from('letters')
-    .select('id, title, content, mood, created_at, updated_at')
-    .order('created_at', { ascending: false })
-    .then(function(result) {
-      if (result.error) throw result.error;
-      var letters = result.data;
+  apiRead('')
+    .then(function(letters) {
       if (letters.length === 0) {
         grid.innerHTML =
           '<div class="empty-state" style="grid-column: 1/-1">' +

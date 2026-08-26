@@ -7,13 +7,7 @@ let currentLetters = [];
 async function loadPanel() {
   const list = document.getElementById('panel-list');
   try {
-    const { data, error } = await _supabase
-      .from('letters')
-      .select('id, title, content, mood, created_at, updated_at')
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    currentLetters = data;
+    currentLetters = await apiRead('');
 
     if (currentLetters.length === 0) {
       list.innerHTML = `

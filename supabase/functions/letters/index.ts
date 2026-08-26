@@ -95,6 +95,28 @@ serve(async (req: Request): Promise<Response> => {
       ? pathParts[lettersIndex + 1]
       : null;
 
+    if (req.method === "GET") {
+      const path = resourceId
+        ? `letters?id=eq.${encodeURIComponent(resourceId)}&select=id,title,content,mood,created_at,updated_at`
+        : "letters?select=id,title,content,mood,created_at,updated_at&order=created_at.desc";
+      const { data, error, status } = await supabaseRequest(path, "GET");
+      if (error) {
+        return new Response(JSON.stringify({ error }), {
+          status,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      if (resourceId && (!Array.isArray(data) || !data.length)) {
+        return new Response(JSON.stringify({ error: "Carta no encontrada" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      return new Response(JSON.stringify(resourceId ? data[0] : data), {
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     if (req.method === "POST" && !resourceId) {
       const { title, content, mood } = await req.json();
       if (!title || !content) {

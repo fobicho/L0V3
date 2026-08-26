@@ -73,3 +73,16 @@ async function login(secret) {
   setRole(data.role);
   return data;
 }
+
+async function apiRead(path) {
+  const token = getToken();
+  const res = await fetch(LETTERS_FUNCTION_URL + path, {
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + token
+    }
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error del servidor');
+  return data;
+}
