@@ -10,16 +10,6 @@ CREATE TABLE letters (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TABLE letter_history (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  letter_id UUID REFERENCES letters(id) ON DELETE CASCADE,
-  title TEXT NOT NULL,
-  content TEXT NOT NULL,
-  mood TEXT,
-  version INT NOT NULL,
-  saved_at TIMESTAMPTZ DEFAULT now()
-);
-
 CREATE TABLE IF NOT EXISTS login_attempts (
   client_key TEXT PRIMARY KEY,
   attempt_count INT NOT NULL DEFAULT 0,
@@ -76,10 +66,11 @@ REVOKE ALL ON FUNCTION clear_login_rate_limit(TEXT) FROM PUBLIC, anon, authentic
 
 -- Enable RLS
 ALTER TABLE letters ENABLE ROW LEVEL SECURITY;
-ALTER TABLE letter_history ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Public read letters" ON letters;
-DROP POLICY IF EXISTS "Public read history" ON letter_history;
 
 -- Las lecturas y escrituras pasan por Edge Functions con autorización JWT.
 -- No se crean políticas para anon/authenticated: RLS bloquea el acceso directo.
+
+DROP FUNCTION IF EXISTS update_letter_with_history(UUID, TEXT, TEXT, TEXT);
+DROP TABLE IF EXISTS letter_history;

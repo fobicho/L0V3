@@ -150,47 +150,27 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     if (req.method === "PUT" && resourceId) {
-      const { data: existing, error: fetchErr } = await supabaseRequest(
-        `letters?id=eq.${resourceId}&select=*`,
-        "GET"
-      );
-      if (fetchErr || !existing || !existing.length) {
-        return new Response(JSON.stringify({ error: "Carta no encontrada" }), {
-          status: 404,
+      const body = await req.json();
+      if (typeof body.title !== "string" || !body.title.trim()
+        || typeof body.content !== "string" || !body.content.trim()) {
+        return new Response(JSON.stringify({ error: "title y content son requeridos" }), {
+          status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       }
-      const old = existing[0];
-
-      const { data: historyRows } = await supabaseRequest(
-        `letter_history?letter_id=eq.${resourceId}&select=version`,
-        "GET"
-      );
-      const version = (historyRows?.length || 0) + 1;
-
-      await supabaseRequest("letter_history", "POST", {
-        letter_id: resourceId,
-        title: old.title,
-        content: old.content,
-        mood: old.mood,
-        version,
-        saved_at: old.updated_at,
-      });
-
-      const body = await req.json();
-      const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
-      if (body.title !== undefined) updates.title = body.title;
-      if (body.content !== undefined) updates.content = body.content;
-      if (body.mood !== undefined) updates.mood = body.mood;
-
       const { data, error, status } = await supabaseRequest(
-        `letters?id=eq.${resourceId}`,
+        `letters?id=eq.${encodeURIComponent(resourceId)}`,
         "PATCH",
-        updates
+        {
+          title: body.title.trim(),
+          content: body.content,
+          mood: typeof body.mood === "string" ? body.mood : null,
+          updated_at: new Date().toISOString(),
+        }
       );
       if (error) {
         return new Response(JSON.stringify({ error }), {
-          status,
+          status: status === 404 ? 404 : status,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       }
