@@ -1,5 +1,5 @@
 if (!getToken() || !isAdmin()) {
-  window.location.href = '/acceso';
+  window.location.href = '/login';
 }
 
 let currentLetters = [];

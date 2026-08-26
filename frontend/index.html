@@ -19,7 +19,7 @@
       if (valid) document.getElementById('auth-visibility').remove();
       else {
         try { sessionStorage.setItem('redirectAfterLogin', location.pathname + location.search); } catch (_) {}
-        location.replace('/acceso');
+        location.replace('/login');
       }
     }());
   </script>

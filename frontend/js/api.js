@@ -23,7 +23,7 @@ function setRole(role) {
 function logout() {
   clearToken();
   localStorage.removeItem('role');
-  window.location.href = '/acceso';
+  window.location.href = '/login';
 }
 
 function parseJWT(token) {
