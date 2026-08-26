@@ -28,9 +28,9 @@ async function loadPanel() {
       return `
         <div class="panel-card">
           <div class="panel-card-info">
-            <div class="panel-card-title">${letter.title}</div>
-            <div class="panel-card-preview">${letter.content}</div>
-            <div class="panel-card-date">${formatDate(letter.created_at)}</div>
+            <div class="panel-card-title">${escapeHTML(letter.title)}</div>
+            <div class="panel-card-preview">${escapeHTML(letter.content)}</div>
+            <div class="panel-card-date">${escapeHTML(formatDate(letter.created_at))}</div>
           </div>
           <div class="panel-card-actions">
             <button class="btn btn-secondary btn-small" onclick="openModal('${letter.id}')">✏️ Editar</button>
@@ -43,7 +43,7 @@ async function loadPanel() {
       <div class="empty-state">
         <div class="empty-state-emoji">😢</div>
         <h3>Error</h3>
-        <p>${err.message || err}</p>
+        <p>${escapeHTML(err.message || err)}</p>
       </div>`;
   }
 }

@@ -31,10 +31,10 @@ window.openLetterModal = function(id) {
       body.innerHTML =
         '<div class="letter-paper">' +
           '<div class="letter-header">' +
-            '<h1 class="letter-title">' + letter.title + '</h1>' +
+            '<h1 class="letter-title">' + escapeHTML(letter.title) + '</h1>' +
             '<div class="letter-divider"></div>' +
           '</div>' +
-          '<div class="letter-content">' + letter.content + '</div>' +
+          '<div class="letter-content">' + escapeHTML(letter.content) + '</div>' +
           '<div class="letter-footer">' +
             '<div class="letter-divider"></div>' +
             '<span class="letter-date">' + formatDate(letter.created_at) + '</span>' +
@@ -45,7 +45,7 @@ window.openLetterModal = function(id) {
         '<div class="empty-state">' +
           '<div class="empty-state-emoji">😢</div>' +
           '<h3>Carta no encontrada</h3>' +
-          '<p>' + (err.message || err) + '</p>' +
+          '<p>' + escapeHTML(err.message || err) + '</p>' +
         '</div>';
     });
 };
@@ -90,7 +90,7 @@ window.loadLetters = function() {
         '<div class="empty-state" style="grid-column: 1/-1">' +
           '<div class="empty-state-emoji">😢</div>' +
           '<h3>No se pudieron cargar las cartas</h3>' +
-          '<p>' + (err.message || err) + '</p>' +
+          '<p>' + escapeHTML(err.message || err) + '</p>' +
         '</div>';
     });
 };
