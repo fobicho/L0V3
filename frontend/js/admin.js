@@ -89,6 +89,7 @@ async function apiWrite(path, method, body) {
     method,
     headers: {
       'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
       'Authorization': 'Bearer ' + token
     },
     body: body ? JSON.stringify(body) : undefined
@@ -108,9 +109,9 @@ document.getElementById('letter-form').addEventListener('submit', async (e) => {
 
   try {
     if (id) {
-      await apiWrite('/letters/' + id, 'PUT', body);
+      await apiWrite('/' + id, 'PUT', body);
     } else {
-      await apiWrite('/letters', 'POST', body);
+      await apiWrite('', 'POST', body);
     }
     closeModal();
     loadPanel();
@@ -122,7 +123,7 @@ document.getElementById('letter-form').addEventListener('submit', async (e) => {
 async function confirmDelete() {
   const id = document.getElementById('delete-id').value;
   try {
-    await apiWrite('/letters/' + id, 'DELETE');
+    await apiWrite('/' + id, 'DELETE');
     closeConfirm();
     loadPanel();
   } catch (err) {

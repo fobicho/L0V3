@@ -90,7 +90,10 @@ serve(async (req: Request): Promise<Response> => {
 
     const url = new URL(req.url);
     const pathParts = url.pathname.split("/").filter(Boolean);
-    const resourceId = pathParts.length > 1 ? pathParts[1] : null;
+    const lettersIndex = pathParts.indexOf("letters");
+    const resourceId = (lettersIndex !== -1 && lettersIndex < pathParts.length - 1)
+      ? pathParts[lettersIndex + 1]
+      : null;
 
     if (req.method === "POST" && !resourceId) {
       const { title, content, mood } = await req.json();
