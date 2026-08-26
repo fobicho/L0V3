@@ -144,12 +144,6 @@ async function navigateTo(href, push) {
   }
 }
 
-if (location.pathname !== '/acceso' && location.pathname !== '/admin') {
-  if (!getToken()) {
-    location.href = '/acceso';
-  }
-}
-
 initLayout();
 
 document.addEventListener('click', e => {
@@ -168,5 +162,11 @@ window.addEventListener('popstate', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (typeof getToken === 'function' && location.pathname !== '/acceso' && location.pathname !== '/admin') {
+    if (!getToken()) {
+      location.href = '/acceso';
+      return;
+    }
+  }
   runPageScripts(location.pathname);
 });
