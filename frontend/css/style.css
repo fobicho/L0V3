@@ -316,9 +316,10 @@ nav a:hover, nav button:hover {
 /* Login */
 .login-container {
   max-width: 340px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 20px;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -410,6 +411,7 @@ nav a:hover, nav button:hover {
 }
 
 .login-box {
+  width: 100%;
   background: var(--blanco);
   border-radius: var(--radio);
   padding: 32px 28px;
@@ -712,6 +714,13 @@ nav a:hover, nav button:hover {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .login-container {
+    max-width: 420px;
+    padding: 20px 16px;
+  }
+  .login-box {
+    padding: 28px 20px;
+  }
   header h1 { font-size: 2rem; }
   .cards-grid { grid-template-columns: 1fr; }
   .letter-paper { padding: 30px 25px; }

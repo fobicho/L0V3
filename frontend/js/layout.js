@@ -33,7 +33,8 @@ function updateCounter() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (typeof getToken === 'function' && location.pathname !== '/login' && location.pathname !== '/admin') {
+  const currentPath = location.pathname.replace(/\/+$/, '') || '/';
+  if (typeof getToken === 'function' && currentPath !== '/login' && currentPath !== '/admin') {
     if (!getToken()) {
       try { sessionStorage.setItem('redirectAfterLogin', location.pathname + location.search); } catch {}
       location.href = '/login';
