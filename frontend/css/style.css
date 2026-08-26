@@ -350,6 +350,21 @@ nav a:hover, nav button:hover {
   transform: scale(1.05);
 }
 
+.sidebar .logout-fixed {
+  position: static;
+  width: 100%;
+  margin-top: 18px;
+  padding: 11px 16px;
+  border: 1px solid #e0526f;
+  background: #d94b68;
+  color: var(--blanco);
+}
+
+.sidebar .logout-fixed:hover {
+  background: #bd3855;
+  transform: translateY(-1px);
+}
+
 .pista-fixed {
   position: fixed;
   bottom: 16px;
@@ -867,7 +882,8 @@ nav a:hover, nav button:hover {
 .content {
   margin-left: 280px;
   padding: 48px 40px;
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
   box-sizing: border-box;
 }
 
@@ -917,6 +933,8 @@ nav a:hover, nav button:hover {
   }
   .content {
     margin-left: 0;
+    height: 100dvh;
+    padding: 72px 20px 32px;
   }
   .sidebar-nav {
     margin-top: 16px;
