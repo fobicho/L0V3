@@ -32,52 +32,6 @@ function updateCounter() {
   set('c-seconds', d.seconds);
 }
 
-function buildSidebar(activePage) {
-  const page = activePage || (location.pathname === '/cartas' ? 'cartas' : 'inicio');
-  return `
-  <aside class="sidebar">
-    <div class="sidebar-counter">
-      <h2>Nuestro tiempo juntos</h2>
-      <div class="counter-grid">
-        <div class="counter-item"><span id="c-years">0</span><small>Años</small></div>
-        <div class="counter-item"><span id="c-months">0</span><small>Meses</small></div>
-        <div class="counter-item"><span id="c-days">0</span><small>Días</small></div>
-        <div class="counter-item"><span id="c-hours">0</span><small>Horas</small></div>
-        <div class="counter-item"><span id="c-minutes">0</span><small>Minutos</small></div>
-        <div class="counter-item"><span id="c-seconds">0</span><small>Segundos</small></div>
-      </div>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="/" class="nav-link ${page === 'inicio' ? 'active' : ''}">Inicio</a>
-      <a href="/cartas" class="nav-link ${page === 'cartas' ? 'active' : ''}">Buzón</a>
-    </nav>
-  </aside>`;
-}
-
-function buildLogout() {
-  return `<button class="logout-fixed" onclick="logout()">Cerrar sesión</button>`;
-}
-
-function initLayout(path) {
-  document.title = 'Buzón';
-  const hasSidebar = !!document.querySelector('.sidebar');
-  const hasLogout = !!document.querySelector('.logout-fixed');
-
-  const page = (path || location.pathname) === '/cartas' ? 'cartas' : 'inicio';
-  if (!hasSidebar) {
-    document.body.insertAdjacentHTML('afterbegin', buildSidebar(page));
-  }
-
-  if (!hasLogout) {
-    document.body.insertAdjacentHTML('beforeend', buildLogout());
-  }
-
-  updateCounter();
-  if (!window._counterInterval) {
-    window._counterInterval = setInterval(updateCounter, 1000);
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof getToken === 'function' && location.pathname !== '/acceso' && location.pathname !== '/admin') {
     if (!getToken()) {
@@ -85,5 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
   }
-  initLayout();
+  updateCounter();
+  setInterval(updateCounter, 1000);
 });

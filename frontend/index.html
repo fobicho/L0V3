@@ -9,9 +9,26 @@
   <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-  <script src="js/config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/layout.js"></script>
+  <aside class="sidebar">
+    <div class="sidebar-counter">
+      <h2>Nuestro tiempo juntos</h2>
+      <div class="counter-grid">
+        <div class="counter-item"><span id="c-years">0</span><small>Años</small></div>
+        <div class="counter-item"><span id="c-months">0</span><small>Meses</small></div>
+        <div class="counter-item"><span id="c-days">0</span><small>Días</small></div>
+        <div class="counter-item"><span id="c-hours">0</span><small>Horas</small></div>
+        <div class="counter-item"><span id="c-minutes">0</span><small>Minutos</small></div>
+        <div class="counter-item"><span id="c-seconds">0</span><small>Segundos</small></div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/" class="nav-link active">Inicio</a>
+      <a href="/cartas" class="nav-link">Buzón</a>
+    </nav>
+  </aside>
+
+  <button class="logout-fixed" onclick="logout()">Cerrar sesión</button>
+
   <div class="floating-hearts">
     <span>♡</span><span>✩</span><span>✧</span><span>☽</span><span>❀</span>
     <span>(˶˃𐃷˂˶)</span><span>୨ৎ</span><span>꩜</span><span>✿</span><span>𐙚</span>
@@ -33,7 +50,9 @@
     </div>
   </main>
 
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/api.js"></script>
-
+  <script src="js/layout.js"></script>
 </body>
 </html>

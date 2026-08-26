@@ -725,6 +725,11 @@ nav a:hover, nav button:hover {
 .loading {
   text-align: center;
   padding: 40px;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .loading-heart {
