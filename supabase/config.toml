@@ -1,0 +1,8 @@
+project_id = "jeqzuxarqizvlvogvpeb"
+
+# Estas funciones validan sus propios tokens/secretos en el código.
+[functions.auth-login]
+verify_jwt = false
+
+[functions.letters]
+verify_jwt = false
