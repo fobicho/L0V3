@@ -4,11 +4,47 @@ const USER_SECRET = Deno.env.get("USER_SECRET")!;
 const ADMIN_SECRET = Deno.env.get("ADMIN_SECRET")!;
 const JWT_SECRET = Deno.env.get("JWT_SECRET")!;
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+const ALLOWED_ORIGINS = new Set([
+  "https://cartas-elp.pages.dev",
+  "http://localhost:3000",
+]);
+const attempts = new Map<string, { count: number; resetAt: number }>();
+const MAX_ATTEMPTS = 5;
+const WINDOW_MS = 15 * 60 * 1000;
+
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get("Origin");
+  return {
+    "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.has(origin)
+      ? origin
+      : "https://cartas-elp.pages.dev",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type",
+    "Vary": "Origin",
+  };
+}
+
+function getClientKey(req: Request): string {
+  return req.headers.get("cf-connecting-ip")
+    || req.headers.get("x-forwarded-for")?.split(",")[0].trim()
+    || "unknown";
+}
+
+function checkRateLimit(key: string): boolean {
+  const now = Date.now();
+  const current = attempts.get(key);
+  if (!current || current.resetAt <= now) {
+    attempts.set(key, { count: 1, resetAt: now + WINDOW_MS });
+    return true;
+  }
+  if (current.count >= MAX_ATTEMPTS) return false;
+  current.count++;
+  return true;
+}
+
+function clearRateLimit(key: string): void {
+  attempts.delete(key);
+}
 
 function base64url(data: Uint8Array): string {
   return btoa(String.fromCharCode(...data))
@@ -49,15 +85,31 @@ async function signJWT(payload: Record<string, unknown>): Promise<string> {
 }
 
 serve(async (req: Request): Promise<Response> => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Método no permitido" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+
+  const clientKey = getClientKey(req);
+  if (!checkRateLimit(clientKey)) {
+    return new Response(JSON.stringify({ error: "Demasiados intentos. Intenta nuevamente más tarde." }), {
+      status: 429,
+      headers: { "Content-Type": "application/json", "Retry-After": "900", ...corsHeaders },
+    });
+  }
+
   try {
     const { secret } = await req.json();
-    const trimmed = secret?.trim();
+    const trimmed = typeof secret === "string" ? secret.trim() : "";
 
-    if (!trimmed) {
+    if (typeof trimmed !== "string" || !trimmed || trimmed.length > 128) {
       return new Response(
         JSON.stringify({ error: "Ingresa tu código de acceso" }),
         {
@@ -78,6 +130,7 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
+    clearRateLimit(clientKey);
     const token = await signJWT({ role });
 
     return new Response(
