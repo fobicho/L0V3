@@ -81,7 +81,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const payload = await verifyJWT(auth.split(" ")[1]);
-    if (!payload || payload.role !== "admin") {
+    if (!payload || (payload.role !== "admin" && payload.role !== "user")) {
       return new Response(JSON.stringify({ error: "Acceso denegado" }), {
         status: 403,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -113,6 +113,13 @@ serve(async (req: Request): Promise<Response> => {
         });
       }
       return new Response(JSON.stringify(resourceId ? data[0] : data), {
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    if (payload.role !== "admin") {
+      return new Response(JSON.stringify({ error: "Acceso denegado" }), {
+        status: 403,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
