@@ -1,23 +1,26 @@
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function getToken() {
-  return localStorage.getItem('token');
+  return sessionStorage.getItem('token');
 }
 
 function setToken(token) {
-  localStorage.setItem('token', token);
+  sessionStorage.setItem('token', token);
+  localStorage.removeItem('token');
 }
 
 function clearToken() {
+  sessionStorage.removeItem('token');
   localStorage.removeItem('token');
 }
 
 function getRole() {
-  return localStorage.getItem('role');
+  return sessionStorage.getItem('role');
 }
 
 function setRole(role) {
-  localStorage.setItem('role', role);
+  sessionStorage.setItem('role', role);
+  localStorage.removeItem('role');
 }
 
 function escapeHTML(value) {
@@ -31,6 +34,7 @@ function escapeHTML(value) {
 
 function logout() {
   clearToken();
+  sessionStorage.removeItem('role');
   localStorage.removeItem('role');
   window.location.href = '/login';
 }
