@@ -43,4 +43,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   updateCounter();
   setInterval(updateCounter, 1000);
+
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.querySelector('.sidebar-toggle');
+  if (sidebar && toggle) {
+    toggle.addEventListener('click', () => {
+      const open = sidebar.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      toggle.textContent = open ? '×' : '☰';
+    });
+    sidebar.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        sidebar.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Abrir menú');
+        toggle.textContent = '☰';
+      });
+    });
+  }
 });
