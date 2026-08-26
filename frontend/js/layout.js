@@ -66,14 +66,6 @@ function initLayout(path) {
   const page = (path || location.pathname) === '/cartas' ? 'cartas' : 'inicio';
   if (!hasSidebar) {
     document.body.insertAdjacentHTML('afterbegin', buildSidebar(page));
-  } else {
-    document.querySelectorAll('.nav-link').forEach(link => {
-      const href = link.getAttribute('href');
-      link.classList.toggle('active',
-        (page === 'inicio' && href === '/') ||
-        (page === 'cartas' && href === '/cartas')
-      );
-    });
   }
 
   if (!hasLogout) {
@@ -86,81 +78,6 @@ function initLayout(path) {
   }
 }
 
-function runPageScripts(path) {
-  if (path === '/carta' && typeof loadLetter === 'function') {
-    loadLetter();
-  }
-}
-
-let _navigating = false;
-
-async function navigateTo(href, push) {
-  if (_navigating) return;
-  if (push === undefined) push = true;
-  if (!href) return;
-
-  const target = new URL(href, location.origin);
-  if (target.pathname === location.pathname && target.search === location.search) return;
-  if (target.origin !== location.origin) { window.location.href = href; return; }
-
-  _navigating = true;
-  try {
-    const resp = await fetch(target.pathname + target.search);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const html = await resp.text();
-
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-
-    const scriptsToLoad = [...doc.querySelectorAll('script[src]')].filter(s => !s.getAttribute('src').includes('layout.js'));
-    const inlineScripts = [...doc.querySelectorAll('script:not([src])')].filter(s => s.textContent.trim());
-
-    doc.querySelectorAll('script').forEach(s => s.remove());
-    document.body.innerHTML = doc.body.innerHTML;
-
-    const loads = scriptsToLoad.map(old => {
-      const s = document.createElement('script');
-      s.src = old.getAttribute('src');
-      document.body.appendChild(s);
-      return new Promise(r => { s.onload = r; s.onerror = r; });
-    });
-    if (loads.length) await Promise.all(loads);
-
-    inlineScripts.forEach(old => {
-      const s = document.createElement('script');
-      s.textContent = old.textContent;
-      document.body.appendChild(s);
-    });
-
-    if (push) history.pushState({}, '', href);
-
-    initLayout(target.pathname);
-    runPageScripts(target.pathname);
-
-    window.scrollTo(0, 0);
-  } catch (err) {
-    window.location.href = href;
-  } finally {
-    _navigating = false;
-  }
-}
-
-initLayout();
-
-document.addEventListener('click', e => {
-  if (e.defaultPrevented) return;
-  const link = e.target.closest('a[href]');
-  if (!link) return;
-  const href = link.getAttribute('href');
-  if (!href || href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:')) return;
-  if (link.target === '_blank') return;
-  e.preventDefault();
-  navigateTo(href);
-});
-
-window.addEventListener('popstate', () => {
-  navigateTo(location.pathname + location.search, false);
-});
-
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof getToken === 'function' && location.pathname !== '/acceso' && location.pathname !== '/admin') {
     if (!getToken()) {
@@ -168,5 +85,5 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
   }
-  runPageScripts(location.pathname);
+  initLayout();
 });
