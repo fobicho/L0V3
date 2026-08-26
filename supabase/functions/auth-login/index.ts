@@ -8,9 +8,6 @@ const ALLOWED_ORIGINS = new Set([
   "https://cartas-elp.pages.dev",
   "http://localhost:3000",
 ]);
-const attempts = new Map<string, { count: number; resetAt: number }>();
-const MAX_ATTEMPTS = 5;
-const WINDOW_MS = 15 * 60 * 1000;
 
 function getCorsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get("Origin");
@@ -30,20 +27,25 @@ function getClientKey(req: Request): string {
     || "unknown";
 }
 
-function checkRateLimit(key: string): boolean {
-  const now = Date.now();
-  const current = attempts.get(key);
-  if (!current || current.resetAt <= now) {
-    attempts.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return true;
-  }
-  if (current.count >= MAX_ATTEMPTS) return false;
-  current.count++;
-  return true;
-}
-
-function clearRateLimit(key: string): void {
-  attempts.delete(key);
+async function updateRateLimit(key: string, clear = false): Promise<{ allowed: boolean; retryAfter: number }> {
+  const baseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!baseUrl || !serviceKey) throw new Error("Rate limit configuration missing");
+  const rpc = clear ? "clear_login_rate_limit" : "check_login_rate_limit";
+  const res = await fetch(`${baseUrl}/rest/v1/rpc/${rpc}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": serviceKey,
+      "Authorization": `Bearer ${serviceKey}`,
+    },
+    body: clear ? JSON.stringify({ client_key_input: key }) : JSON.stringify({ client_key_input: key }),
+  });
+  if (!res.ok) throw new Error("Rate limit service unavailable");
+  if (clear) return { allowed: true, retryAfter: 0 };
+  const rows = await res.json();
+  const row = Array.isArray(rows) ? rows[0] : rows;
+  return { allowed: row?.allowed === true, retryAfter: Number(row?.retry_after || 900) };
 }
 
 function base64url(data: Uint8Array): string {
@@ -98,10 +100,19 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   const clientKey = getClientKey(req);
-  if (!checkRateLimit(clientKey)) {
+  let rateLimit;
+  try {
+    rateLimit = await updateRateLimit(clientKey);
+  } catch {
+    return new Response(JSON.stringify({ error: "Servicio temporalmente no disponible" }), {
+      status: 503,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+  if (!rateLimit.allowed) {
     return new Response(JSON.stringify({ error: "Demasiados intentos. Intenta nuevamente más tarde." }), {
       status: 429,
-      headers: { "Content-Type": "application/json", "Retry-After": "900", ...corsHeaders },
+      headers: { "Content-Type": "application/json", "Retry-After": String(rateLimit.retryAfter), ...corsHeaders },
     });
   }
 
@@ -130,7 +141,7 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    clearRateLimit(clientKey);
+    await updateRateLimit(clientKey, true);
     const token = await signJWT({ role });
 
     return new Response(
