@@ -83,10 +83,24 @@
       if (payload && payload.role === 'admin' && payload.exp * 1000 > Date.now()) {
         window.location.href = '/admin';
       } else if (payload && payload.exp * 1000 > Date.now()) {
-        window.location.href = '/';
+        let target = null;
+        try { target = sessionStorage.getItem('redirectAfterLogin'); } catch {}
+        if (target) { try { sessionStorage.removeItem('redirectAfterLogin'); } catch {} window.location.href = target; }
+        else { window.location.href = '/'; }
       } else {
         clearToken();
         localStorage.removeItem('role');
+      }
+    }
+
+    function goAfterLogin(data) {
+      let target = null;
+      try { target = sessionStorage.getItem('redirectAfterLogin'); } catch {}
+      if (target) {
+        try { sessionStorage.removeItem('redirectAfterLogin'); } catch {}
+        window.location.href = target;
+      } else {
+        window.location.href = data.role === 'admin' ? '/admin' : '/';
       }
     }
 
@@ -97,7 +111,7 @@
 
       try {
         const data = await login(secret);
-        window.location.href = data.role === 'admin' ? '/admin' : '/';
+        goAfterLogin(data);
       } catch (err) {
         errorEl.textContent = err.message || 'Error de conexión';
         errorEl.classList.add('show');

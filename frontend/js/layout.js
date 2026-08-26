@@ -35,6 +35,7 @@ function updateCounter() {
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof getToken === 'function' && location.pathname !== '/acceso' && location.pathname !== '/admin') {
     if (!getToken()) {
+      try { sessionStorage.setItem('redirectAfterLogin', location.pathname + location.search); } catch {}
       location.href = '/acceso';
       return;
     }
