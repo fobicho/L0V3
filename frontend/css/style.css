@@ -887,7 +887,14 @@ nav a:hover, nav button:hover {
   .letter-gallery { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 6px; margin: 12px 0; }
   .gallery-img { max-width: 82px; max-height: 82px; height: 82px; }
   .pagination { position: fixed; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); margin: 0; gap: 10px; font-size: 0.85rem; }
-  .delete-all-fixed { top: 16px; left: auto; right: 150px; padding: 8px 16px; font-size: 1rem; }
+  .panel-actions .delete-all-fixed {
+    position: static;
+    padding: 8px 16px;
+    font-size: 1rem;
+    background: #d94f75;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(217, 79, 117, 0.25);
+  }
   .content { height: 100dvh; overflow: hidden; overscroll-behavior: none; scrollbar-width: none; }
   .content::-webkit-scrollbar { display: none; }
   .content-inner .user-pagination { width: max-content; max-width: calc(100vw - 32px); left: 50%; right: auto; transform: translateX(-50%); box-sizing: border-box; justify-content: center; }
