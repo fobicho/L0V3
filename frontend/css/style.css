@@ -860,24 +860,36 @@ nav a:hover, nav button:hover {
   margin-top: auto;
 }
 
-.nav-link {
+.sidebar-nav .nav-link,
+.sidebar .logout-fixed {
   display: block;
   width: 100%;
   box-sizing: border-box;
-  padding: 14px 16px;
+  height: 48px;
+  padding: 0 16px;
   border-radius: 12px;
-  color: var(--texto);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.2;
   font-weight: 600;
   text-align: center;
-  background: linear-gradient(135deg, rgba(255, 182, 193, 0.12), rgba(221, 160, 221, 0.12));
-  border: 1px solid rgba(255, 182, 193, 0.2);
-  transition: all 0.25s ease;
 }
 
-.nav-link:hover {
+.sidebar-nav .nav-link {
+  color: var(--texto);
+  background: linear-gradient(135deg, rgba(255, 182, 193, 0.12), rgba(221, 160, 221, 0.12));
+  border: 1px solid rgba(255, 182, 193, 0.2);
+  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-nav .nav-link:hover {
   background: linear-gradient(135deg, rgba(255, 182, 193, 0.25), rgba(221, 160, 221, 0.25));
   border-color: rgba(255, 182, 193, 0.4);
   color: var(--texto);
+  transform: none;
 }
 
 .nav-link.active {
@@ -890,6 +902,7 @@ nav a:hover, nav button:hover {
 .nav-link.active:hover {
   background: linear-gradient(135deg, var(--rosa-pastel), var(--lila));
   border-color: transparent;
+  transform: none;
 }
 
 .content {
