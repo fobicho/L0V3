@@ -68,9 +68,7 @@ window.loadLetters = function() {
       grid.innerHTML = letters.map(function(letter) {
         var read = localStorage.getItem('read_' + letter.id) === '1';
         return '<div class="card" data-letter-id="' + letter.id + '">' +
-          (letter.images && letter.images.length
-            ? '<img class="card-cover" src="' + escapeHTML(letter.images[0]) + '" alt="' + escapeHTML(letter.title) + '">'
-            : '<img class="brand-icon card-envelope" src="../icon.png" alt="">') +
+          '<img class="brand-icon card-envelope" src="../icon.png" alt="">' +
           (!read ? '<div class="card-badge">¡Nueva!</div>' : '') +
         '</div>';
       }).join('');
