@@ -23,7 +23,7 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 body {
@@ -70,8 +70,6 @@ a {
 .container-admin {
   max-width: none;
   padding: 0 24px;
-  min-height: 100vh;
-  overflow-x: hidden;
 }
 
 /* Header */
@@ -618,7 +616,7 @@ nav a:hover, nav button:hover {
 
 .panel-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   padding-bottom: 40px;
 }
@@ -793,10 +791,11 @@ nav a:hover, nav button:hover {
   .letter-paper { padding: 30px 25px; }
   .letter-title { font-size: 1.5rem; }
   .panel-list { grid-template-columns: 1fr; }
-  .panel-card { flex-direction: column; align-items: flex-start; }
-  .panel-card-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+  .panel-card { flex-direction: column; align-items: flex-start; width: 100%; max-width: 100%; }
+  .panel-card-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
   .panel-header { flex-wrap: wrap; }
   .panel-actions { width: 100%; }
+  .container-admin { height: 100vh; overflow-y: auto; overflow-x: hidden; padding: 0 16px; }
   .modal { padding: 25px 20px; }
 }
 
