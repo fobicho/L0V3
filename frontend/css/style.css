@@ -639,6 +639,16 @@ nav a:hover, nav button:hover {
   padding-bottom: 40px;
 }
 
+.panel-list .empty-state {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: calc(100vh - 150px);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  padding: 40px 20px;
+}
+
 .panel-card {
   background: var(--blanco);
   border-radius: var(--radio);
