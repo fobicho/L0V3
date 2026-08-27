@@ -8,7 +8,7 @@ window.openLetterModal = function(id) {
   overlay.innerHTML =
     '<div class="modal-content">' +
       '<div class="modal-body">' +
-        '<div class="loading"><div class="loading-heart">💌</div><p>Cargando carta...</p></div>' +
+        '<div class="loading"><img class="brand-icon loading-heart" src="../icon.png" alt="">\n<p>Cargando carta...</p></div>' +
       '</div>' +
     '</div>';
   document.body.appendChild(overlay);
@@ -54,7 +54,7 @@ window.loadLetters = function() {
       if (letters.length === 0) {
         grid.innerHTML =
           '<div class="empty-state" style="grid-column: 1/-1">' +
-            '<div class="empty-state-emoji">💌</div>' +
+            '<img class="brand-icon empty-state-emoji" src="../icon.png" alt="">' +
             '<h3>Aún no hay cartas</h3>' +
             '<p>Pronto llegarán cartas llenas de amor...</p>' +
           '</div>';
@@ -63,7 +63,7 @@ window.loadLetters = function() {
       grid.innerHTML = letters.map(function(letter) {
         var read = localStorage.getItem('read_' + letter.id) === '1';
         return '<div class="card" data-letter-id="' + letter.id + '">' +
-          '<div class="card-envelope">💌</div>' +
+          '<img class="brand-icon card-envelope" src="../icon.png" alt="">' +
           (!read ? '<div class="card-badge">¡Nueva!</div>' : '') +
         '</div>';
       }).join('');

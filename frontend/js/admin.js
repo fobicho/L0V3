@@ -12,7 +12,7 @@ async function loadPanel() {
     if (currentLetters.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-emoji">💌</div>
+          <img class="brand-icon empty-state-emoji" src="../icon.png" alt="">
           <h3>No hay cartas aún</h3>
           <p>Crea la primera carta para tu novia</p>
         </div>`;
