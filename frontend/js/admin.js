@@ -187,15 +187,14 @@ function closeConfirm() {
 function openView(id) {
   const letter = currentLetters.find(l => l.id === id);
   if (!letter) return;
-  document.getElementById('view-title').textContent = letter.title;
-  document.getElementById('view-content').textContent = letter.content;
-  const gallery = document.getElementById('view-gallery');
-  if (gallery) {
-    gallery.innerHTML = (letter.images && letter.images.length)
-      ? '<div class="letter-gallery">' + letter.images.map(src =>
-          '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="">').join('') + '</div>'
-      : '';
-  }
+  const preview = document.getElementById('view-preview');
+  preview.innerHTML = '<div class="letter-paper"><div class="letter-header"><h1 class="letter-title">' +
+    escapeHTML(letter.title) + '</h1><div class="letter-divider"></div></div>' +
+    '<div class="letter-content">' + escapeHTML(letter.content) + '</div>' +
+    ((letter.images && letter.images.length) ? '<div class="letter-gallery">' + letter.images.map(src =>
+      '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="">').join('') + '</div>' : '') +
+    '<div class="letter-footer"><div class="letter-divider"></div><span class="letter-date">' +
+    escapeHTML(formatDate(letter.created_at)) + '</span></div></div>';
   document.getElementById('view-overlay').classList.add('show');
 }
 
@@ -261,11 +260,13 @@ async function confirmDeleteAll() {
   if (!confirm('¿Seguro que quieres eliminar todas las cartas? Esta acción no se puede deshacer.')) return;
   try {
     const lettersToDelete = [...currentLetters];
-    for (const letter of lettersToDelete) {
-      await apiWrite('/' + letter.id, 'DELETE');
-    }
+    const results = await Promise.allSettled(
+      lettersToDelete.map(letter => apiWrite('/' + letter.id, 'DELETE'))
+    );
+    const failed = results.filter(result => result.status === 'rejected').length;
+    if (failed) alert(failed + ' carta(s) no pudieron eliminarse.');
     currentPage = 1;
-    await loadPanel();
+    window.location.reload();
   } catch (err) {
     alert(err.message);
   }

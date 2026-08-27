@@ -865,6 +865,11 @@ nav a:hover, nav button:hover {
   .delete-all-fixed { top: 16px; right: 150px; padding: 8px 10px; font-size: 0.7rem; }
 }
 
+.view-preview .letter-paper {
+  padding: 24px 22px;
+  box-shadow: none;
+}
+
 /* Loading */
 .loading {
   text-align: center;
