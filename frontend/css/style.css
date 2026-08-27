@@ -365,14 +365,15 @@ nav a:hover, nav button:hover {
   background: linear-gradient(135deg, rgba(217, 75, 104, 0.15), rgba(189, 56, 85, 0.15));
   border: 1px solid rgba(217, 75, 104, 0.35);
   color: #d94b68;
-  transition: all 0.25s ease;
+  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
 }
 
 .sidebar .logout-fixed:hover {
   background: linear-gradient(135deg, rgba(217, 75, 104, 0.3), rgba(189, 56, 85, 0.3));
   border-color: rgba(217, 75, 104, 0.55);
-  box-shadow: 0 2px 12px rgba(217, 75, 104, 0.18);
   color: #bd3855;
+  box-shadow: 0 4px 15px var(--sombra);
+  transform: none;
 }
 
 .pista-fixed {
@@ -876,7 +877,6 @@ nav a:hover, nav button:hover {
 .nav-link:hover {
   background: linear-gradient(135deg, rgba(255, 182, 193, 0.25), rgba(221, 160, 221, 0.25));
   border-color: rgba(255, 182, 193, 0.4);
-  box-shadow: 0 2px 12px rgba(255, 105, 180, 0.12);
   color: var(--texto);
 }
 
@@ -888,7 +888,8 @@ nav a:hover, nav button:hover {
 }
 
 .nav-link.active:hover {
-  box-shadow: 0 4px 18px rgba(255, 105, 180, 0.35);
+  background: linear-gradient(135deg, var(--rosa-pastel), var(--lila));
+  border-color: transparent;
 }
 
 .content {
