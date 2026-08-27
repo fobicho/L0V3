@@ -882,7 +882,10 @@ nav a:hover, nav button:hover {
   .letter-gallery { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 6px; margin: 12px 0; }
   .gallery-img { max-width: 82px; max-height: 82px; height: 82px; }
   .pagination { position: fixed; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); margin: 0; gap: 10px; font-size: 0.85rem; }
-  .delete-all-fixed { top: 16px; right: 150px; padding: 8px 10px; font-size: 0.7rem; }
+  .delete-all-fixed { top: 16px; left: 16px; right: auto; padding: 8px 16px; font-size: 1rem; }
+  .content { scrollbar-width: none; }
+  .content::-webkit-scrollbar { display: none; }
+  .pagination { width: auto; box-sizing: border-box; justify-content: center; }
 }
 
 .view-preview .letter-paper {

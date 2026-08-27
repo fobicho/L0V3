@@ -39,7 +39,7 @@ async function loadPanel() {
           <div class="panel-card-info">
             <div class="panel-card-title">${escapeHTML(letter.title)}</div>
             <div class="panel-card-preview">${escapeHTML(letter.content)}</div>
-            <div class="panel-card-date">${escapeHTML(formatDate(letter.created_at))}</div>
+            <div class="panel-card-date">${escapeHTML(formatDateTime(letter.created_at))}</div>
           </div>
           <div class="panel-card-actions">
             <button class="btn btn-secondary btn-small" onclick="openView('${letter.id}')">Ver</button>
@@ -193,7 +193,7 @@ function openView(id) {
     ((letter.images && letter.images.length) ? '<div class="letter-gallery">' + letter.images.map(src =>
       '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="">').join('') + '</div>' : '') +
     '<div class="letter-footer"><div class="letter-divider"></div><span class="letter-date">' +
-    escapeHTML(formatDate(letter.created_at)) + '</span></div></div>';
+    escapeHTML(formatDateTime(letter.created_at)) + '</span></div></div>';
   document.getElementById('view-overlay').classList.add('show');
 }
 

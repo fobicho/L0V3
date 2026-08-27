@@ -43,7 +43,7 @@ window.openLetterModal = function(id) {
              : '') +
            '<div class="letter-footer">' +
              '<div class="letter-divider"></div>' +
-             '<span class="letter-date">' + formatDate(letter.created_at) + '</span>' +
+             '<span class="letter-date">' + formatDateTime(letter.created_at) + '</span>' +
            '</div>' +
          '</div>' +
          '<div class="modal-actions"><button type="button" class="btn btn-secondary modal-close-btn">Cerrar</button></div>';
