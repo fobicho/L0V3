@@ -27,7 +27,7 @@ async function loadPanel() {
             <div class="panel-card-date">${escapeHTML(formatDate(letter.created_at))}</div>
           </div>
           <div class="panel-card-actions">
-            <button class="btn btn-secondary btn-small" onclick="openModal('${letter.id}')">✏️ Editar</button>
+            <button class="btn btn-secondary btn-small" onclick="openView('${letter.id}')">👁️ Ver</button>
             <button class="btn btn-danger btn-small" onclick="openConfirm('${letter.id}')">🗑️</button>
           </div>
         </div>`;
@@ -42,24 +42,14 @@ async function loadPanel() {
   }
 }
 
-function openModal(id = null) {
+function openModal() {
   const overlay = document.getElementById('modal-overlay');
   const title = document.getElementById('modal-title');
   const form = document.getElementById('letter-form');
 
   form.reset();
   document.getElementById('edit-id').value = '';
-
-  if (id) {
-    const letter = currentLetters.find(l => l.id === id);
-    if (!letter) return;
-    title.textContent = 'Editar Carta';
-    document.getElementById('edit-id').value = id;
-    document.getElementById('input-title').value = letter.title;
-    document.getElementById('input-content').value = letter.content;
-  } else {
-    title.textContent = 'Nueva Carta';
-  }
+  title.textContent = 'Nueva Carta';
 
   overlay.classList.add('show');
 }
@@ -75,6 +65,18 @@ function openConfirm(id) {
 
 function closeConfirm() {
   document.getElementById('confirm-overlay').classList.remove('show');
+}
+
+function openView(id) {
+  const letter = currentLetters.find(l => l.id === id);
+  if (!letter) return;
+  document.getElementById('view-title').textContent = letter.title;
+  document.getElementById('view-content').textContent = letter.content;
+  document.getElementById('view-overlay').classList.add('show');
+}
+
+function closeView() {
+  document.getElementById('view-overlay').classList.remove('show');
 }
 
 async function apiWrite(path, method, body) {
@@ -95,18 +97,13 @@ async function apiWrite(path, method, body) {
 
 document.getElementById('letter-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const id = document.getElementById('edit-id').value;
   const body = {
     title: document.getElementById('input-title').value,
     content: document.getElementById('input-content').value
   };
 
   try {
-    if (id) {
-      await apiWrite('/' + id, 'PUT', body);
-    } else {
-      await apiWrite('', 'POST', body);
-    }
+    await apiWrite('', 'POST', body);
     closeModal();
     loadPanel();
   } catch (err) {

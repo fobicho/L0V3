@@ -67,6 +67,11 @@ a {
   padding: 0 20px;
 }
 
+.container-admin {
+  max-width: none;
+  padding: 0 24px;
+}
+
 /* Header */
 header {
   text-align: center;
@@ -596,7 +601,7 @@ nav a:hover, nav button:hover {
 .panel-header {
   display: flex;
   align-items: center;
-  margin: 30px 0 20px;
+  margin: 16px 0 20px;
   gap: 14px;
 }
 
@@ -610,9 +615,9 @@ nav a:hover, nav button:hover {
 }
 
 .panel-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
   padding-bottom: 40px;
 }
 
@@ -702,6 +707,20 @@ nav a:hover, nav button:hover {
   margin-top: 20px;
 }
 
+.view-content {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--rosa-claro, #FFE4EC);
+  color: var(--texto);
+  font-family: 'Domine', serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
 .modal-actions .btn {
   flex: 1;
 }
@@ -768,6 +787,7 @@ nav a:hover, nav button:hover {
   }
   .letter-paper { padding: 30px 25px; }
   .letter-title { font-size: 1.5rem; }
+  .panel-list { grid-template-columns: 1fr; }
   .panel-card { flex-direction: column; align-items: flex-start; }
   .panel-card-actions { width: 100%; justify-content: flex-end; }
   .modal { padding: 25px 20px; }
