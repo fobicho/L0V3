@@ -260,7 +260,10 @@ async function confirmDeleteAll() {
   if (!currentLetters.length) return;
   if (!confirm('¿Seguro que quieres eliminar todas las cartas? Esta acción no se puede deshacer.')) return;
   try {
-    await apiWrite('?all=true', 'DELETE');
+    const lettersToDelete = [...currentLetters];
+    for (const letter of lettersToDelete) {
+      await apiWrite('/' + letter.id, 'DELETE');
+    }
     currentPage = 1;
     await loadPanel();
   } catch (err) {
