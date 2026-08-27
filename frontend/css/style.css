@@ -70,6 +70,9 @@ a {
 .container-admin {
   max-width: none;
   padding: 0 24px;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -789,7 +792,9 @@ nav a:hover, nav button:hover {
   .letter-title { font-size: 1.5rem; }
   .panel-list { grid-template-columns: 1fr; }
   .panel-card { flex-direction: column; align-items: flex-start; }
-  .panel-card-actions { width: 100%; justify-content: flex-end; }
+  .panel-card-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+  .panel-header { flex-wrap: wrap; }
+  .panel-actions { width: 100%; }
   .modal { padding: 25px 20px; }
 }
 
