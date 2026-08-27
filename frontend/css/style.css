@@ -70,6 +70,9 @@ a {
 .container-admin {
   max-width: none;
   padding: 0 24px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
@@ -672,13 +675,14 @@ nav a:hover, nav button:hover {
 
 .pagination {
   position: sticky;
-  bottom: 0;
+  bottom: 16px;
+  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  padding: 10px 0 16px;
-  background: var(--rosa-claro);
+  padding: 10px 0;
+  background: transparent;
   z-index: 2;
   color: var(--texto-claro);
 }
@@ -709,9 +713,9 @@ nav a:hover, nav button:hover {
 .modal {
   background: var(--blanco);
   border-radius: var(--radio);
-  padding: 35px 30px;
+  padding: 22px 20px;
   width: 100%;
-  max-width: 550px;
+  max-width: 410px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 10px 40px rgba(90, 74, 90, 0.3);
@@ -719,15 +723,29 @@ nav a:hover, nav button:hover {
 }
 
 .modal h3 {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
+  font-size: 1.2rem;
+  margin-bottom: 14px;
   text-align: center;
 }
 
 .modal-actions {
   display: flex;
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 14px;
+}
+
+.admin-modal-overlay .form-group label {
+  font-size: 0.8rem;
+}
+
+.admin-modal-overlay .form-group input,
+.admin-modal-overlay .form-group textarea {
+  padding: 9px 10px;
+  font-size: 0.8rem;
+}
+
+.admin-modal-overlay .form-group textarea {
+  min-height: 90px;
 }
 
 .view-content {
@@ -821,9 +839,14 @@ nav a:hover, nav button:hover {
   .panel-card-actions .btn { flex: 1 1 0; min-width: 0; padding: 7px 4px; font-size: 0.68rem; }
   .panel-header { flex-wrap: wrap; }
   .panel-actions { width: 100%; }
-  .container-admin { height: 100vh; overflow-y: auto; overflow-x: hidden; padding: 0 16px; }
-  .modal { padding: 25px 20px; }
-  .pagination { gap: 10px; font-size: 0.85rem; }
+  .container-admin { height: 100vh; overflow-y: auto; overflow-x: hidden; padding: 0 16px 24px; }
+  .modal { max-width: 340px; padding: 18px 16px; }
+  .modal h3 { font-size: 1.05rem; margin-bottom: 12px; }
+  .admin-modal-overlay .form-group label { font-size: 0.75rem; }
+  .admin-modal-overlay .form-group input,
+  .admin-modal-overlay .form-group textarea { padding: 8px 9px; font-size: 0.75rem; }
+  .admin-modal-overlay .form-group textarea { min-height: 72px; }
+  .pagination { bottom: 12px; gap: 10px; font-size: 0.85rem; }
 }
 
 /* Loading */
