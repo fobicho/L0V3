@@ -23,7 +23,7 @@
 
 html {
   scroll-behavior: smooth;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
@@ -70,8 +70,7 @@ a {
 .container-admin {
   max-width: none;
   padding: 0 24px;
-  height: 100vh;
-  overflow-y: auto;
+  min-height: 100vh;
   overflow-x: hidden;
 }
 
@@ -619,7 +618,7 @@ nav a:hover, nav button:hover {
 
 .panel-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 16px;
   padding-bottom: 40px;
 }
@@ -633,6 +632,7 @@ nav a:hover, nav button:hover {
   justify-content: space-between;
   align-items: center;
   gap: 15px;
+  max-width: 100%;
   transition: all 0.3s ease;
 }
 
@@ -646,6 +646,8 @@ nav a:hover, nav button:hover {
   color: var(--fucsia);
   font-size: 1.1rem;
   margin-bottom: 4px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .panel-card-preview {
