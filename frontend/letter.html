@@ -35,21 +35,19 @@
 
       const container = document.getElementById('letter-content');
       try {
-        const { data, error } = await _supabase
-          .from('letters')
-          .select('id, title, content, mood, created_at, updated_at')
-          .eq('id', id)
-          .single();
-
-        if (error) throw error;
+        const data = await apiRead('/' + encodeURIComponent(id));
 
         container.innerHTML = `
           <div class="letter-paper">
             <div class="letter-header">
-              <h1 class="letter-title">${data.title}</h1>
+              <h1 class="letter-title">${escapeHTML(data.title)}</h1>
               <div class="letter-divider"></div>
             </div>
-            <div class="letter-content">${data.content}</div>
+            <div class="letter-content">${escapeHTML(data.content)}</div>
+            ${data.images && data.images.length
+              ? '<div class="letter-gallery">' + data.images.map(src =>
+                  '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="">').join('') + '</div>'
+              : ''}
             <div class="letter-footer">
               <div class="letter-divider"></div>
               <span class="letter-date">${formatDate(data.created_at)}</span>

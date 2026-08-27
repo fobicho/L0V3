@@ -3,6 +3,9 @@ if (!getToken() || !isAdmin()) {
 }
 
 let currentLetters = [];
+let pendingImages = [];
+
+const MAX_IMAGES = 10;
 
 async function loadPanel() {
   const list = document.getElementById('panel-list');
@@ -49,6 +52,8 @@ function openModal() {
 
   form.reset();
   document.getElementById('edit-id').value = '';
+  pendingImages = [];
+  renderImagePreview();
   title.textContent = 'Nueva Carta';
 
   overlay.classList.add('show');
@@ -56,6 +61,89 @@ function openModal() {
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('show');
+}
+
+async function apiUpload(file) {
+  const token = getToken();
+  const fd = new FormData();
+  fd.append('file', file);
+  const res = await fetch(LETTERS_FUNCTION_URL + '/upload', {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + token
+    },
+    body: fd
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error al subir la imagen');
+  return data.url;
+}
+
+async function apiDeleteImage(url) {
+  const token = getToken();
+  try {
+    await fetch(LETTERS_FUNCTION_URL + '/upload?url=' + encodeURIComponent(url), {
+      method: 'DELETE',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token
+      }
+    });
+  } catch (_) { /* ignore */ }
+}
+
+function renderImagePreview() {
+  const preview = document.getElementById('image-preview');
+  const count = document.getElementById('image-count');
+  preview.innerHTML = pendingImages.map((img, i) => {
+    const busy = img.uploading ? ' uploading' : '';
+    const media = img.url
+      ? `<img src="${escapeHTML(img.url)}" alt="">`
+      : '<div class="image-preview-placeholder"></div>';
+    return `
+      <div class="image-preview-item${busy}">
+        ${media}
+        <button type="button" class="image-preview-remove" data-index="${i}" aria-label="Quitar imagen">×</button>
+        ${img.uploading ? '<div class="image-preview-spinner"></div>' : ''}
+      </div>`;
+  }).join('');
+  count.textContent = pendingImages.length + ' / ' + MAX_IMAGES;
+
+  preview.querySelectorAll('.image-preview-remove').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const idx = parseInt(btn.getAttribute('data-index'), 10);
+      const removed = pendingImages.splice(idx, 1)[0];
+      if (removed && !removed.uploading) apiDeleteImage(removed.url);
+      renderImagePreview();
+    });
+  });
+}
+
+function setupImageInput() {
+  const input = document.getElementById('input-images');
+  input.addEventListener('change', async function () {
+    const files = Array.from(input.files || []);
+    for (const file of files) {
+      if (pendingImages.length >= MAX_IMAGES) {
+        alert('Máximo ' + MAX_IMAGES + ' imágenes por carta');
+        break;
+      }
+      const entry = { url: '', uploading: true };
+      pendingImages.push(entry);
+      renderImagePreview();
+      try {
+        const url = await apiUpload(file);
+        entry.url = url;
+        entry.uploading = false;
+      } catch (err) {
+        pendingImages.pop();
+        alert(err.message);
+      }
+      renderImagePreview();
+    }
+    input.value = '';
+  });
 }
 
 function openConfirm(id) {
@@ -72,6 +160,13 @@ function openView(id) {
   if (!letter) return;
   document.getElementById('view-title').textContent = letter.title;
   document.getElementById('view-content').textContent = letter.content;
+  const gallery = document.getElementById('view-gallery');
+  if (gallery) {
+    gallery.innerHTML = (letter.images && letter.images.length)
+      ? '<div class="letter-gallery">' + letter.images.map(src =>
+          '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="">').join('') + '</div>'
+      : '';
+  }
   document.getElementById('view-overlay').classList.add('show');
 }
 
@@ -99,17 +194,27 @@ document.getElementById('letter-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const body = {
     title: document.getElementById('input-title').value,
-    content: document.getElementById('input-content').value
+    content: document.getElementById('input-content').value,
+    images: pendingImages.filter((i) => !i.uploading).map((i) => i.url)
   };
 
   try {
     await apiWrite('', 'POST', body);
+    pendingImages = [];
     closeModal();
     loadPanel();
   } catch (err) {
     alert(err.message);
   }
 });
+
+function cancelModal() {
+  pendingImages
+    .filter((i) => !i.uploading && i.url)
+    .forEach((i) => apiDeleteImage(i.url));
+  pendingImages = [];
+  closeModal();
+}
 
 async function confirmDelete() {
   const id = document.getElementById('delete-id').value;
@@ -122,4 +227,7 @@ async function confirmDelete() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadPanel);
+document.addEventListener('DOMContentLoaded', function () {
+  setupImageInput();
+  loadPanel();
+});

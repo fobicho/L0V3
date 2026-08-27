@@ -43,9 +43,14 @@
           <label for="input-content">Contenido</label>
           <textarea id="input-content" placeholder="Escribe tu carta aquí..."></textarea>
         </div>
+        <div class="form-group">
+          <label for="input-images">Imágenes <span id="image-count" class="image-count">0 / 10</span></label>
+          <input type="file" id="input-images" accept="image/*" multiple>
+          <div id="image-preview" class="image-preview"></div>
+        </div>
         <input type="hidden" id="edit-id">
         <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-secondary" onclick="cancelModal()">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
@@ -57,6 +62,7 @@
     <div class="modal">
       <h3 id="view-title"></h3>
       <div id="view-content" class="view-content"></div>
+      <div id="view-gallery"></div>
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" onclick="closeView()">Cerrar</button>
       </div>
@@ -81,6 +87,6 @@
   <script src="../js/config.js?v=4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/api.js?v=4"></script>
-  <script src="../js/admin.js?v=2"></script>
+  <script src="../js/admin.js?v=3"></script>
 </body>
 </html>

@@ -66,6 +66,89 @@ async function supabaseRequest(
   }
 }
 
+const BUCKET = "letter-images";
+const MAX_IMAGES = 10;
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+function storagePathFromUrl(urlStr: string | null): string | null {
+  if (!urlStr) return null;
+  const marker = `/object/public/${BUCKET}/`;
+  const i = urlStr.indexOf(marker);
+  return i === -1 ? null : urlStr.slice(i + marker.length);
+}
+
+async function handleImageUpload(file: File): Promise<Response> {
+  if (!file.type.startsWith("image/")) {
+    return new Response(JSON.stringify({ error: "El archivo debe ser una imagen" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    return new Response(JSON.stringify({ error: "Imagen muy grande (máx 5MB)" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+  const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const path = `${crypto.randomUUID()}.${ext}`;
+  const uploadRes = await fetch(
+    `${PROJECT_URL}/storage/v1/object/${BUCKET}/${path}`,
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${SERVICE_ROLE_KEY}`,
+        "apikey": SERVICE_ROLE_KEY,
+        "Content-Type": file.type,
+        "x-upsert": "true",
+      },
+      body: file,
+    }
+  );
+  if (!uploadRes.ok) {
+    return new Response(JSON.stringify({ error: "No se pudo subir la imagen" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+  const url = `${PROJECT_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+  return new Response(JSON.stringify({ url }), {
+    status: 201,
+    headers: { "Content-Type": "application/json", ...corsHeaders },
+  });
+}
+
+async function handleImageDelete(urlStr: string | null): Promise<Response> {
+  const path = storagePathFromUrl(urlStr);
+  if (!path) {
+    return new Response(JSON.stringify({ error: "URL inválida" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+  const delRes = await fetch(
+    `${PROJECT_URL}/storage/v1/object/${BUCKET}/${path}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${SERVICE_ROLE_KEY}`,
+        "apikey": SERVICE_ROLE_KEY,
+      },
+    }
+  );
+  return new Response(JSON.stringify({ ok: delRes.ok }), {
+    headers: { "Content-Type": "application/json", ...corsHeaders },
+  });
+}
+
+function sanitizeImages(images: unknown): string[] | null {
+  if (!Array.isArray(images)) return null;
+  const urls = images
+    .filter((u): u is string => typeof u === "string" && u.startsWith("http"))
+    .slice(0, MAX_IMAGES);
+  return urls;
+}
+
 serve(async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -89,6 +172,36 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const url = new URL(req.url);
+    const urlParams = url.searchParams;
+    const isUploadRoute = url.pathname.endsWith("/upload");
+
+    if (isUploadRoute) {
+      if (payload.role !== "admin") {
+        return new Response(JSON.stringify({ error: "Acceso denegado" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      if (req.method === "POST") {
+        const form = await req.formData();
+        const file = form.get("file");
+        if (!(file instanceof File)) {
+          return new Response(JSON.stringify({ error: "Archivo no proporcionado" }), {
+            status: 400,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        }
+        return await handleImageUpload(file);
+      }
+      if (req.method === "DELETE") {
+        return await handleImageDelete(urlParams.get("url"));
+      }
+      return new Response(JSON.stringify({ error: "Método no permitido" }), {
+        status: 405,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     const pathParts = url.pathname.split("/").filter(Boolean);
     const lettersIndex = pathParts.indexOf("letters");
     const resourceId = (lettersIndex !== -1 && lettersIndex < pathParts.length - 1)
@@ -97,8 +210,8 @@ serve(async (req: Request): Promise<Response> => {
 
     if (req.method === "GET") {
       const path = resourceId
-        ? `letters?id=eq.${encodeURIComponent(resourceId)}&select=id,title,content,mood,created_at,updated_at`
-        : "letters?select=id,title,content,mood,created_at,updated_at&order=created_at.desc";
+        ? `letters?id=eq.${encodeURIComponent(resourceId)}&select=id,title,content,mood,images,created_at,updated_at`
+        : "letters?select=id,title,content,mood,images,created_at,updated_at&order=created_at.desc";
       const { data, error, status } = await supabaseRequest(path, "GET");
       if (error) {
         return new Response(JSON.stringify({ error }), {
@@ -125,17 +238,19 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     if (req.method === "POST" && !resourceId) {
-      const { title, content, mood } = await req.json();
+      const { title, content, mood, images } = await req.json();
       if (!title || !content) {
         return new Response(
           JSON.stringify({ error: "title y content son requeridos" }),
           { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
       }
+      const imagesArr = sanitizeImages(images) ?? [];
       const { data, error, status } = await supabaseRequest("letters", "POST", {
         title,
         content,
         mood: mood || null,
+        images: imagesArr,
       });
       if (error) {
         return new Response(JSON.stringify({ error }), {
@@ -158,15 +273,19 @@ serve(async (req: Request): Promise<Response> => {
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       }
+      const patch: Record<string, unknown> = {
+        title: body.title.trim(),
+        content: body.content,
+        mood: typeof body.mood === "string" ? body.mood : null,
+        updated_at: new Date().toISOString(),
+      };
+      if (Array.isArray(body.images)) {
+        patch.images = sanitizeImages(body.images) ?? [];
+      }
       const { data, error, status } = await supabaseRequest(
         `letters?id=eq.${encodeURIComponent(resourceId)}`,
         "PATCH",
-        {
-          title: body.title.trim(),
-          content: body.content,
-          mood: typeof body.mood === "string" ? body.mood : null,
-          updated_at: new Date().toISOString(),
-        }
+        patch
       );
       if (error) {
         return new Response(JSON.stringify({ error }), {
@@ -180,6 +299,20 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     if (req.method === "DELETE" && resourceId) {
+      const { data: existing, error: getErr } = await supabaseRequest(
+        `letters?id=eq.${encodeURIComponent(resourceId)}&select=images`,
+        "GET"
+      );
+      if (getErr) {
+        return new Response(JSON.stringify({ error: getErr }), {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      const imgs = Array.isArray(existing) && existing[0]?.images ? existing[0].images : [];
+      for (const imgUrl of imgs) {
+        await handleImageDelete(imgUrl);
+      }
       const { error: delErr, status: delStatus } = await supabaseRequest(
         `letters?id=eq.${resourceId}`,
         "DELETE"
