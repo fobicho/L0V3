@@ -7,7 +7,7 @@ let pendingImages = [];
 let currentPage = 1;
 
 const MAX_IMAGES = 10;
-const LETTERS_PER_PAGE = 10;
+const LETTERS_PER_PAGE = 8;
 
 async function loadPanel() {
   const list = document.getElementById('panel-list');
@@ -23,9 +23,14 @@ async function loadPanel() {
           <h3>No hay cartas aún</h3>
           <p>Crea la primera carta para tu novia</p>
         </div>`;
+      const pagination = document.createElement('nav');
+      pagination.className = 'pagination';
+      pagination.setAttribute('aria-label', 'Paginación de cartas');
+      pagination.innerHTML = '<button class="btn btn-secondary btn-small" disabled>Anterior</button><span>Página 1 de 1</span><button class="btn btn-secondary btn-small" disabled>Siguiente</button>';
+      list.after(pagination);
       return;
     }
-    const totalPages = Math.ceil(currentLetters.length / LETTERS_PER_PAGE);
+    const totalPages = Math.max(1, Math.ceil(currentLetters.length / LETTERS_PER_PAGE));
     currentPage = Math.min(currentPage, totalPages);
     const start = (currentPage - 1) * LETTERS_PER_PAGE;
     const pageLetters = currentLetters.slice(start, start + LETTERS_PER_PAGE);
@@ -43,7 +48,7 @@ async function loadPanel() {
           </div>
         </div>`;
     }).join('');
-    if (totalPages > 1) {
+    if (totalPages >= 1) {
       list.insertAdjacentHTML('afterend', `<nav class="pagination" aria-label="Paginación de cartas">
         <button class="btn btn-secondary btn-small" onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>Anterior</button>
         <span>Página ${currentPage} de ${totalPages}</span>
@@ -61,7 +66,7 @@ async function loadPanel() {
 }
 
 function changePage(direction) {
-  const totalPages = Math.ceil(currentLetters.length / LETTERS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(currentLetters.length / LETTERS_PER_PAGE));
   const nextPage = currentPage + direction;
   if (nextPage < 1 || nextPage > totalPages) return;
   currentPage = nextPage;
