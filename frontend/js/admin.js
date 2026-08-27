@@ -30,8 +30,8 @@ async function loadPanel() {
             <div class="panel-card-date">${escapeHTML(formatDate(letter.created_at))}</div>
           </div>
           <div class="panel-card-actions">
-            <button class="btn btn-secondary btn-small" onclick="openView('${letter.id}')">👁️ Ver</button>
-            <button class="btn btn-danger btn-small" onclick="openConfirm('${letter.id}')">🗑️</button>
+            <button class="btn btn-secondary btn-small" onclick="openView('${letter.id}')">Ver</button>
+            <button class="btn btn-danger btn-small" onclick="openConfirm('${letter.id}')">Eliminar</button>
           </div>
         </div>`;
     }).join('');
