@@ -858,6 +858,7 @@ nav a:hover, nav button:hover {
   flex-direction: column;
   gap: 10px;
   margin-top: auto;
+  padding: 0;
 }
 
 .sidebar-nav .nav-link,
