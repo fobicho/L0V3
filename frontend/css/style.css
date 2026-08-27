@@ -896,6 +896,8 @@ nav a:hover, nav button:hover {
     box-shadow: 0 4px 15px rgba(217, 79, 117, 0.25);
   }
   .content { height: 100dvh; overflow: hidden; overscroll-behavior: none; scrollbar-width: none; }
+  .content-inner { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
+  .content-inner--top { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
   .content::-webkit-scrollbar { display: none; }
   .content-inner .user-pagination { width: max-content; max-width: calc(100vw - 32px); left: 50%; right: auto; transform: translateX(-50%); box-sizing: border-box; justify-content: center; }
 }
