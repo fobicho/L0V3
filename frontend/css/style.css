@@ -355,6 +355,7 @@ nav a:hover, nav button:hover {
   position: static;
   display: block;
   width: 100%;
+  box-sizing: border-box;
   margin-top: 10px;
   flex-shrink: 0;
   padding: 14px 16px;
