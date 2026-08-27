@@ -367,11 +367,17 @@ nav a:hover, nav button:hover {
   padding: 8px 16px;
   border: none;
   border-radius: 999px;
-  background: #fff;
-  color: #d94f75;
-  font: 600 0.85rem 'Quicksand', sans-serif;
+  background: var(--blanco);
+  color: var(--fucsia);
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
   cursor: pointer;
   box-shadow: 0 4px 15px var(--sombra);
+  transition: transform .15s ease;
+}
+
+.delete-all-fixed:hover {
+  transform: scale(1.05);
 }
 
 .sidebar .logout-fixed {
@@ -1041,6 +1047,7 @@ nav a:hover, nav button:hover {
 
 .content-inner--top {
   align-items: flex-start;
+  justify-content: flex-start;
   flex-direction: column;
 }
 
