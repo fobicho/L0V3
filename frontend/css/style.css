@@ -631,6 +631,8 @@ nav a:hover, nav button:hover {
   align-items: center;
   gap: 15px;
   max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   transition: all 0.3s ease;
 }
 
@@ -666,6 +668,20 @@ nav a:hover, nav button:hover {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 4px 0 32px;
+  color: var(--texto-claro);
+}
+
+.pagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* Modal */
@@ -790,13 +806,16 @@ nav a:hover, nav button:hover {
   }
   .letter-paper { padding: 30px 25px; }
   .letter-title { font-size: 1.5rem; }
-  .panel-list { grid-template-columns: 1fr; }
-  .panel-card { flex-direction: column; align-items: flex-start; width: 100%; max-width: 100%; }
+  .panel-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .panel-card { flex-direction: column; align-items: stretch; width: 100%; max-width: 100%; padding: 16px 14px; }
+  .panel-card-info { width: 100%; }
+  .panel-card-title, .panel-card-preview, .panel-card-date { max-width: 100%; }
   .panel-card-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
   .panel-header { flex-wrap: wrap; }
   .panel-actions { width: 100%; }
   .container-admin { height: 100vh; overflow-y: auto; overflow-x: hidden; padding: 0 16px; }
   .modal { padding: 25px 20px; }
+  .pagination { gap: 10px; font-size: 0.85rem; }
 }
 
 /* Loading */

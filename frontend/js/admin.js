@@ -4,13 +4,17 @@ if (!getToken() || !isAdmin()) {
 
 let currentLetters = [];
 let pendingImages = [];
+let currentPage = 1;
 
 const MAX_IMAGES = 10;
+const LETTERS_PER_PAGE = 10;
 
 async function loadPanel() {
   const list = document.getElementById('panel-list');
   try {
     currentLetters = await apiRead('');
+    const oldPagination = document.querySelector('.pagination');
+    if (oldPagination) oldPagination.remove();
 
     if (currentLetters.length === 0) {
       list.innerHTML = `
@@ -21,7 +25,11 @@ async function loadPanel() {
         </div>`;
       return;
     }
-    list.innerHTML = currentLetters.map(letter => {
+    const totalPages = Math.ceil(currentLetters.length / LETTERS_PER_PAGE);
+    currentPage = Math.min(currentPage, totalPages);
+    const start = (currentPage - 1) * LETTERS_PER_PAGE;
+    const pageLetters = currentLetters.slice(start, start + LETTERS_PER_PAGE);
+    list.innerHTML = pageLetters.map(letter => {
       return `
         <div class="panel-card">
           <div class="panel-card-info">
@@ -35,6 +43,13 @@ async function loadPanel() {
           </div>
         </div>`;
     }).join('');
+    if (totalPages > 1) {
+      list.insertAdjacentHTML('afterend', `<nav class="pagination" aria-label="Paginación de cartas">
+        <button class="btn btn-secondary btn-small" onclick="changePage(-1)" ${currentPage === 1 ? 'disabled' : ''}>Anterior</button>
+        <span>Página ${currentPage} de ${totalPages}</span>
+        <button class="btn btn-secondary btn-small" onclick="changePage(1)" ${currentPage === totalPages ? 'disabled' : ''}>Siguiente</button>
+      </nav>`);
+    }
   } catch (err) {
     list.innerHTML = `
       <div class="empty-state">
@@ -43,6 +58,15 @@ async function loadPanel() {
         <p>${escapeHTML(err.message || err)}</p>
       </div>`;
   }
+}
+
+function changePage(direction) {
+  const totalPages = Math.ceil(currentLetters.length / LETTERS_PER_PAGE);
+  const nextPage = currentPage + direction;
+  if (nextPage < 1 || nextPage > totalPages) return;
+  currentPage = nextPage;
+  loadPanel();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function openModal() {
