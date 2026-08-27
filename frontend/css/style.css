@@ -642,7 +642,7 @@ nav a:hover, nav button:hover {
 .panel-list .empty-state {
   grid-column: 1 / -1;
   width: 100%;
-  min-height: calc(100vh - 150px);
+  min-height: calc(100vh - 190px);
   display: grid;
   place-content: center;
   justify-items: center;
@@ -854,6 +854,7 @@ nav a:hover, nav button:hover {
   .letter-paper { padding: 30px 25px; }
   .letter-title { font-size: 1.5rem; }
   .panel-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .panel-list .empty-state { min-height: calc(100vh - 235px); padding-top: 20px; }
   .panel-card { flex-direction: column; align-items: stretch; width: 100%; max-width: 100%; padding: 12px 10px; gap: 8px; }
   .panel-card-info { width: 100%; }
   .panel-card-title, .panel-card-preview, .panel-card-date { max-width: 100%; }
