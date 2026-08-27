@@ -839,14 +839,14 @@ nav a:hover, nav button:hover {
   .panel-card-actions .btn { flex: 1 1 0; min-width: 0; padding: 7px 4px; font-size: 0.68rem; }
   .panel-header { flex-wrap: wrap; }
   .panel-actions { width: 100%; }
-  .container-admin { height: 100vh; overflow-y: auto; overflow-x: hidden; padding: 0 16px 24px; }
+  .container-admin { height: 100vh; overflow-y: auto; overflow-x: hidden; padding: 0 16px 82px; }
   .modal { max-width: 340px; padding: 18px 16px; }
   .modal h3 { font-size: 1.05rem; margin-bottom: 12px; }
   .admin-modal-overlay .form-group label { font-size: 0.75rem; }
   .admin-modal-overlay .form-group input,
   .admin-modal-overlay .form-group textarea { padding: 8px 9px; font-size: 0.75rem; }
   .admin-modal-overlay .form-group textarea { min-height: 72px; }
-  .pagination { bottom: 12px; gap: 10px; font-size: 0.85rem; }
+  .pagination { position: fixed; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); margin: 0; gap: 10px; font-size: 0.85rem; }
 }
 
 /* Loading */
