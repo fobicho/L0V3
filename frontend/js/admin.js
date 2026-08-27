@@ -7,7 +7,7 @@ let pendingImages = [];
 let currentPage = 1;
 
 const MAX_IMAGES = 10;
-const LETTERS_PER_PAGE = 8;
+const LETTERS_PER_PAGE = window.matchMedia('(max-width: 768px)').matches ? 8 : 15;
 
 async function loadPanel() {
   const list = document.getElementById('panel-list');
@@ -251,6 +251,18 @@ async function confirmDelete() {
     await apiWrite('/' + id, 'DELETE');
     closeConfirm();
     loadPanel();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+async function confirmDeleteAll() {
+  if (!currentLetters.length) return;
+  if (!confirm('¿Seguro que quieres eliminar todas las cartas? Esta acción no se puede deshacer.')) return;
+  try {
+    await apiWrite('?all=true', 'DELETE');
+    currentPage = 1;
+    await loadPanel();
   } catch (err) {
     alert(err.message);
   }

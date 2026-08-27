@@ -359,6 +359,21 @@ nav a:hover, nav button:hover {
   transform: scale(1.05);
 }
 
+.delete-all-fixed {
+  position: fixed;
+  top: 16px;
+  right: 150px;
+  z-index: 100;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 999px;
+  background: #fff;
+  color: #d94f75;
+  font: 600 0.85rem 'Quicksand', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 15px var(--sombra);
+}
+
 .sidebar .logout-fixed {
   position: static;
   display: block;
@@ -847,6 +862,7 @@ nav a:hover, nav button:hover {
   .admin-modal-overlay .form-group textarea { padding: 8px 9px; font-size: 0.75rem; }
   .admin-modal-overlay .form-group textarea { min-height: 72px; }
   .pagination { position: fixed; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); margin: 0; gap: 10px; font-size: 0.85rem; }
+  .delete-all-fixed { top: 16px; right: 150px; padding: 8px 10px; font-size: 0.7rem; }
 }
 
 /* Loading */

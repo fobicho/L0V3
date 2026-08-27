@@ -237,6 +237,31 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
+    if (req.method === "DELETE" && urlParams.get("all") === "true" && !resourceId) {
+      const { data: existing, error: getErr } = await supabaseRequest("letters?select=images", "GET");
+      if (getErr) {
+        return new Response(JSON.stringify({ error: getErr }), {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      for (const letter of (Array.isArray(existing) ? existing : [])) {
+        for (const imgUrl of (Array.isArray(letter.images) ? letter.images : [])) {
+          await handleImageDelete(imgUrl);
+        }
+      }
+      const { error: delErr, status: delStatus } = await supabaseRequest("letters?id=not.is.null", "DELETE");
+      if (delErr) {
+        return new Response(JSON.stringify({ error: delErr }), {
+          status: delStatus,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      return new Response(JSON.stringify({ message: "Todas las cartas fueron eliminadas" }), {
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     if (req.method === "POST" && !resourceId) {
       const { title, content, mood, images } = await req.json();
       if (!title || !content) {
