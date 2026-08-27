@@ -61,7 +61,7 @@ window.openLetterModal = function(id) {
 window.loadLetters = function() {
   var grid = document.getElementById('letters-grid');
   if (!grid) return;
-  var pageSize = window.matchMedia('(max-width: 768px)').matches ? 9 : 30;
+  var pageSize = window.matchMedia('(max-width: 768px)').matches ? 12 : 30;
   var currentPage = 1;
 
   function renderPagination(totalPages) {

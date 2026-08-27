@@ -841,6 +841,7 @@ nav a:hover, nav button:hover {
     overflow: hidden;
     overscroll-behavior: none;
   }
+  body { position: fixed; inset: 0; width: 100%; }
   .login-container {
     padding-left: max(16px, env(safe-area-inset-left));
     padding-right: max(16px, env(safe-area-inset-right));
