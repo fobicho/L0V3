@@ -889,11 +889,18 @@ nav a:hover, nav button:hover {
   .pagination { position: fixed; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); margin: 0; gap: 10px; font-size: 0.85rem; }
   .panel-actions .delete-all-fixed {
     position: static;
-    padding: 8px 16px;
-    font-size: 1rem;
+    height: 42px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    line-height: 1.1;
     background: #d94f75;
     color: #fff;
     box-shadow: 0 4px 15px rgba(217, 79, 117, 0.25);
+  }
+  .panel-actions .btn-primary {
+    height: 42px;
+    padding: 6px 12px;
+    line-height: 1.1;
   }
   .content { height: 100dvh; overflow: hidden; overscroll-behavior: none; scrollbar-width: none; }
   .content-inner { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
