@@ -13,12 +13,18 @@ window.openLetterModal = function(id) {
     '</div>';
   document.body.appendChild(overlay);
 
+  var keyHandler = function(e) {
+    if (e.key === 'Escape') closeModal();
+  };
+  function closeModal() {
+    overlay.remove();
+    document.removeEventListener('keydown', keyHandler);
+  }
+
   overlay.addEventListener('click', function(e) {
-    if (e.target === overlay) overlay.remove();
+    if (e.target === overlay) closeModal();
   });
-  document.addEventListener('keydown', function handler(e) {
-    if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', handler); }
-  });
+  document.addEventListener('keydown', keyHandler);
 
   apiRead('/' + encodeURIComponent(id))
     .then(function(letter) {
@@ -39,7 +45,9 @@ window.openLetterModal = function(id) {
              '<div class="letter-divider"></div>' +
              '<span class="letter-date">' + formatDate(letter.created_at) + '</span>' +
            '</div>' +
-         '</div>';
+         '</div>' +
+         '<div class="modal-actions"><button type="button" class="btn btn-secondary modal-close-btn">Cerrar</button></div>';
+       body.querySelector('.modal-close-btn').addEventListener('click', closeModal);
     }).catch(function(err) {
       overlay.querySelector('.modal-body').innerHTML =
         '<div class="empty-state">' +
@@ -53,34 +61,49 @@ window.openLetterModal = function(id) {
 window.loadLetters = function() {
   var grid = document.getElementById('letters-grid');
   if (!grid) return;
+  var pageSize = window.matchMedia('(max-width: 768px)').matches ? 9 : 30;
+  var currentPage = 1;
+
+  function renderPagination(totalPages) {
+    var old = document.querySelector('.user-pagination');
+    if (old) old.remove();
+    var pagination = document.createElement('nav');
+    pagination.className = 'pagination user-pagination';
+    pagination.setAttribute('aria-label', 'Paginación de cartas');
+    pagination.innerHTML = '<button class="btn btn-secondary btn-small" ' + (currentPage === 1 ? 'disabled' : '') + '>Anterior</button>' +
+      '<span>Página ' + currentPage + ' de ' + totalPages + '</span>' +
+      '<button class="btn btn-secondary btn-small" ' + (currentPage === totalPages ? 'disabled' : '') + '>Siguiente</button>';
+    pagination.firstElementChild.onclick = function() { currentPage--; renderPage(); };
+    pagination.lastElementChild.onclick = function() { currentPage++; renderPage(); };
+    grid.after(pagination);
+  }
+
+  var allLetters = [];
+  function renderPage() {
+    var totalPages = Math.max(1, Math.ceil(allLetters.length / pageSize));
+    currentPage = Math.min(currentPage, totalPages);
+    var pageLetters = allLetters.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    grid.classList.toggle('is-empty', allLetters.length === 0);
+    grid.innerHTML = pageLetters.map(function(letter) {
+      var read = localStorage.getItem('read_' + letter.id) === '1';
+      return '<div class="card" data-letter-id="' + letter.id + '">' +
+        '<img class="brand-icon card-envelope" src="../icon.png" alt="">' +
+        (!read ? '<div class="card-badge">¡Nueva!</div>' : '') + '</div>';
+    }).join('');
+    if (allLetters.length === 0) {
+      grid.innerHTML = '<div class="empty-state"><img class="brand-icon empty-state-emoji" src="../icon.png" alt=""><h3>Aún no hay cartas</h3></div>';
+    }
+    var cards = grid.querySelectorAll('.card');
+    for (var i = 0; i < cards.length; i++) {
+      cards[i].addEventListener('click', function() { window.openLetterModal(this.getAttribute('data-letter-id')); });
+    }
+    renderPagination(totalPages);
+  }
 
   apiRead('')
     .then(function(letters) {
-      if (letters.length === 0) {
-        grid.innerHTML =
-          '<div class="empty-state" style="grid-column: 1/-1">' +
-            '<img class="brand-icon empty-state-emoji" src="../icon.png" alt="">' +
-            '<h3>Aún no hay cartas</h3>' +
-            '<p>Pronto llegarán cartas llenas de amor...</p>' +
-          '</div>';
-        return;
-      }
-      grid.innerHTML = letters.map(function(letter) {
-        var read = localStorage.getItem('read_' + letter.id) === '1';
-        return '<div class="card" data-letter-id="' + letter.id + '">' +
-          '<img class="brand-icon card-envelope" src="../icon.png" alt="">' +
-          (!read ? '<div class="card-badge">¡Nueva!</div>' : '') +
-        '</div>';
-      }).join('');
-
-      var cards = grid.querySelectorAll('.card');
-      for (var i = 0; i < cards.length; i++) {
-        (function(card) {
-          card.addEventListener('click', function() {
-            window.openLetterModal(card.getAttribute('data-letter-id'));
-          });
-        })(cards[i]);
-      }
+      allLetters = letters;
+      renderPage();
     }).catch(function(err) {
       grid.innerHTML =
         '<div class="empty-state" style="grid-column: 1/-1">' +

@@ -646,6 +646,7 @@ nav a:hover, nav button:hover {
   display: grid;
   place-content: center;
   justify-items: center;
+  transform: translateY(-18px);
   padding: 40px 20px;
 }
 
@@ -872,6 +873,8 @@ nav a:hover, nav button:hover {
   .admin-modal-overlay .form-group input,
   .admin-modal-overlay .form-group textarea { padding: 8px 9px; font-size: 0.75rem; }
   .admin-modal-overlay .form-group textarea { min-height: 72px; }
+  .letter-gallery { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); gap: 6px; margin: 12px 0; }
+  .gallery-img { max-width: 82px; max-height: 82px; height: 82px; }
   .pagination { position: fixed; left: 16px; right: 16px; bottom: max(12px, env(safe-area-inset-bottom)); margin: 0; gap: 10px; font-size: 0.85rem; }
   .delete-all-fixed { top: 16px; right: 150px; padding: 8px 10px; font-size: 0.7rem; }
 }
@@ -1038,9 +1041,18 @@ nav a:hover, nav button:hover {
 
 .content-inner--top {
   align-items: flex-start;
+  flex-direction: column;
 }
 
 .content-inner .cards-grid {
+  width: 100%;
+}
+
+.content-inner .cards-grid.is-empty {
+  padding: 20px 0;
+}
+
+.content-inner .user-pagination {
   width: 100%;
 }
 
@@ -1101,20 +1113,20 @@ nav a:hover, nav button:hover {
 
 /* Letter gallery */
 .letter-gallery {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   margin: 18px 0;
 }
 
 .gallery-img {
-  flex: 0 1 auto;
-  max-width: 100%;
-  max-height: 380px;
-  width: auto;
-  height: auto;
+  width: 100%;
+  max-width: 140px;
+  max-height: 140px;
+  height: 140px;
+  justify-self: center;
   object-fit: contain;
   border-radius: 10px;
   box-shadow: 0 2px 10px var(--sombra);
@@ -1136,8 +1148,8 @@ nav a:hover, nav button:hover {
 
 .image-preview-item {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 60px;
+  height: 60px;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 8px var(--sombra);

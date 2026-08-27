@@ -21,7 +21,6 @@ async function loadPanel() {
         <div class="empty-state">
           <img class="brand-icon empty-state-emoji" src="../icon.png" alt="">
           <h3>No hay cartas aún</h3>
-          <p>Crea la primera carta para tu novia</p>
         </div>`;
       const pagination = document.createElement('nav');
       pagination.className = 'pagination';
