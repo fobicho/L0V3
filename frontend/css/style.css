@@ -355,7 +355,7 @@ nav a:hover, nav button:hover {
   position: static;
   display: block;
   width: 100%;
-  margin-top: 0;
+  margin-top: 10px;
   flex-shrink: 0;
   padding: 14px 16px;
   border-radius: 12px;
@@ -800,7 +800,7 @@ nav a:hover, nav button:hover {
   padding: 26px 18px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 0;
   z-index: 50;
   overflow-y: auto;
   box-sizing: border-box;
@@ -860,6 +860,8 @@ nav a:hover, nav button:hover {
 
 .nav-link {
   display: block;
+  width: 100%;
+  box-sizing: border-box;
   padding: 14px 16px;
   border-radius: 12px;
   color: var(--texto);
