@@ -353,18 +353,25 @@ nav a:hover, nav button:hover {
 
 .sidebar .logout-fixed {
   position: static;
+  display: block;
   width: 100%;
   margin-top: 0;
   flex-shrink: 0;
-  padding: 11px 16px;
-  border: 1px solid #e0526f;
-  background: #d94b68;
-  color: var(--blanco);
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(217, 75, 104, 0.15), rgba(189, 56, 85, 0.15));
+  border: 1px solid rgba(217, 75, 104, 0.35);
+  color: #d94b68;
+  transition: all 0.25s ease;
 }
 
 .sidebar .logout-fixed:hover {
-  background: #bd3855;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(217, 75, 104, 0.3), rgba(189, 56, 85, 0.3));
+  border-color: rgba(217, 75, 104, 0.55);
+  box-shadow: 0 2px 12px rgba(217, 75, 104, 0.18);
+  color: #bd3855;
 }
 
 .pista-fixed {
@@ -912,6 +919,7 @@ nav a:hover, nav button:hover {
     transform: translateX(-105%);
     transition: transform 0.25s ease;
     z-index: 150;
+    padding: 68px 18px 26px;
   }
   .sidebar.is-open {
     transform: translateX(0);
