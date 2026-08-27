@@ -840,8 +840,10 @@ nav a:hover, nav button:hover {
     height: 100%;
     overflow: hidden;
     overscroll-behavior: none;
+    position: fixed;
+    width: 100%;
   }
-  body { position: fixed; inset: 0; width: 100%; overflow: hidden !important; touch-action: none; }
+  body { inset: 0; overflow: hidden !important; touch-action: none; }
   .login-container {
     padding-left: max(16px, env(safe-area-inset-left));
     padding-right: max(16px, env(safe-area-inset-right));
@@ -904,6 +906,7 @@ nav a:hover, nav button:hover {
     line-height: 1.1;
   }
   .content { position: fixed; inset: 0; width: 100%; height: 100dvh; margin: 0; overflow: hidden; overscroll-behavior: none; scrollbar-width: none; }
+  .content-inner, .content-inner .cards-grid { overflow: hidden; }
   .modal-overlay, .admin-modal-overlay { touch-action: auto; }
   .content-inner { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
   .content-inner--top { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
