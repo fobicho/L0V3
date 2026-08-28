@@ -290,7 +290,7 @@ nav a:hover, nav button:hover {
 .modal-content {
   background: var(--blanco);
   border-radius: var(--radio);
-  max-width: 650px;
+  max-width: 720px;
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
@@ -963,11 +963,6 @@ nav a:hover, nav button:hover {
   .content-inner:not(.content-inner--top) .empty-state { transform: translateY(-18px); }
   .content::-webkit-scrollbar { display: none; }
   .content-inner .user-pagination { width: max-content; max-width: calc(100vw - 32px); left: 50%; right: auto; transform: translateX(-50%); box-sizing: border-box; justify-content: center; }
-}
-
-.view-preview .letter-paper {
-  padding: 24px 22px;
-  box-shadow: none;
 }
 
 /* Loading */
