@@ -299,6 +299,9 @@ async function confirmDeleteAll() {
 
 document.addEventListener('DOMContentLoaded', function () {
   setupImageInput();
+  document.getElementById('view-overlay').addEventListener('click', function (event) {
+    if (event.target === event.currentTarget) closeView();
+  });
   window.addEventListener('resize', function () {
     const nextPageSize = calculatePageSize();
     if (nextPageSize !== pageSize) {
