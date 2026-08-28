@@ -346,6 +346,11 @@ nav a:hover, nav button:hover {
   font-size: clamp(0.78rem, 1.8vw, 1rem);
   line-height: 1.65;
   overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.content-inner:not(.content-inner--top) .empty-state p br {
+  display: none;
 }
 
 /* Login */
