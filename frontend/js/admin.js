@@ -17,8 +17,10 @@ function calculatePageSize() {
   const columns = styles.gridTemplateColumns.split(' ').length;
   const gap = parseFloat(styles.rowGap) || parseFloat(styles.gap) || 0;
   const cardHeight = sample.getBoundingClientRect().height;
-  const availableHeight = list.parentElement.getBoundingClientRect().height;
-  const rows = Math.floor((availableHeight - 110 + gap) / (cardHeight + gap));
+  const listTop = list.getBoundingClientRect().top;
+  const paginationSpace = 96;
+  const availableHeight = window.innerHeight - listTop - paginationSpace;
+  const rows = Math.floor((availableHeight + gap) / (cardHeight + gap));
   return Math.max(1, columns * Math.max(1, rows));
 }
 
