@@ -28,7 +28,7 @@ async function loadPanel() {
   const list = document.getElementById('panel-list');
   try {
     currentLetters = await apiRead('');
-    pageSize = currentLetters.length || 1;
+    if (pageSize === 1) pageSize = currentLetters.length || 1;
     const oldPagination = document.querySelector('.pagination');
     if (oldPagination) oldPagination.remove();
 
