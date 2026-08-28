@@ -5,14 +5,28 @@ if (!getToken() || !isAdmin()) {
 let currentLetters = [];
 let pendingImages = [];
 let currentPage = 1;
+let pageSize = 1;
 
 const MAX_IMAGES = 10;
-const LETTERS_PER_PAGE = window.matchMedia('(max-width: 768px)').matches ? 8 : 15;
+
+function calculatePageSize() {
+  const list = document.getElementById('panel-list');
+  const sample = list && list.querySelector('.panel-card');
+  if (!sample) return 1;
+  const styles = window.getComputedStyle(list);
+  const columns = styles.gridTemplateColumns.split(' ').length;
+  const gap = parseFloat(styles.rowGap) || parseFloat(styles.gap) || 0;
+  const cardHeight = sample.getBoundingClientRect().height;
+  const availableHeight = list.parentElement.getBoundingClientRect().height;
+  const rows = Math.floor((availableHeight - 110 + gap) / (cardHeight + gap));
+  return Math.max(1, columns * Math.max(1, rows));
+}
 
 async function loadPanel() {
   const list = document.getElementById('panel-list');
   try {
     currentLetters = await apiRead('');
+    pageSize = currentLetters.length || 1;
     const oldPagination = document.querySelector('.pagination');
     if (oldPagination) oldPagination.remove();
 
@@ -29,10 +43,10 @@ async function loadPanel() {
       list.after(pagination);
       return;
     }
-    const totalPages = Math.max(1, Math.ceil(currentLetters.length / LETTERS_PER_PAGE));
+    const totalPages = Math.max(1, Math.ceil(currentLetters.length / pageSize));
     currentPage = Math.min(currentPage, totalPages);
-    const start = (currentPage - 1) * LETTERS_PER_PAGE;
-    const pageLetters = currentLetters.slice(start, start + LETTERS_PER_PAGE);
+    const start = (currentPage - 1) * pageSize;
+    const pageLetters = currentLetters.slice(start, start + pageSize);
     list.innerHTML = pageLetters.map(letter => {
       return `
         <div class="panel-card">
@@ -54,6 +68,11 @@ async function loadPanel() {
         <button class="btn btn-secondary btn-small" onclick="changePage(1)" ${currentPage === totalPages ? 'disabled' : ''}>Siguiente</button>
       </nav>`);
     }
+    const measuredPageSize = calculatePageSize();
+    if (measuredPageSize !== pageSize) {
+      pageSize = measuredPageSize;
+      loadPanel();
+    }
   } catch (err) {
     list.innerHTML = `
       <div class="empty-state">
@@ -65,7 +84,7 @@ async function loadPanel() {
 }
 
 function changePage(direction) {
-  const totalPages = Math.max(1, Math.ceil(currentLetters.length / LETTERS_PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(currentLetters.length / pageSize));
   const nextPage = currentPage + direction;
   if (nextPage < 1 || nextPage > totalPages) return;
   currentPage = nextPage;
@@ -273,5 +292,12 @@ async function confirmDeleteAll() {
 
 document.addEventListener('DOMContentLoaded', function () {
   setupImageInput();
+  window.addEventListener('resize', function () {
+    const nextPageSize = calculatePageSize();
+    if (nextPageSize !== pageSize) {
+      pageSize = nextPageSize;
+      loadPanel();
+    }
+  });
   loadPanel();
 });
