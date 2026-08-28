@@ -61,8 +61,22 @@ window.openLetterModal = function(id) {
 window.loadLetters = function() {
   var grid = document.getElementById('letters-grid');
   if (!grid) return;
-  var pageSize = window.matchMedia('(max-width: 768px)').matches ? 12 : 18;
+  var pageSize = 1;
   var currentPage = 1;
+
+  function calculatePageSize() {
+    var sample = grid.querySelector('.card');
+    if (!sample) return 1;
+    var styles = window.getComputedStyle(grid);
+    var columns = styles.gridTemplateColumns.split(' ').length;
+    var gap = parseFloat(styles.rowGap) || parseFloat(styles.gap) || 0;
+    var cardHeight = sample.getBoundingClientRect().height;
+    var gridHeight = grid.parentElement.getBoundingClientRect().height;
+    var verticalPadding = (parseFloat(styles.paddingTop) || 0) + (parseFloat(styles.paddingBottom) || 0);
+    var paginationSpace = 76;
+    var rows = Math.floor((gridHeight - verticalPadding - paginationSpace + gap) / (cardHeight + gap));
+    return Math.max(1, columns * Math.max(1, rows));
+  }
 
   function renderPagination(totalPages) {
     var old = document.querySelector('.user-pagination');
@@ -98,12 +112,25 @@ window.loadLetters = function() {
       cards[i].addEventListener('click', function() { window.openLetterModal(this.getAttribute('data-letter-id')); });
     }
     renderPagination(totalPages);
+    var measuredPageSize = calculatePageSize();
+    if (allLetters.length && measuredPageSize !== pageSize) {
+      pageSize = measuredPageSize;
+      renderPage();
+    }
   }
 
   apiRead('')
     .then(function(letters) {
       allLetters = letters;
+      pageSize = allLetters.length || 1;
       renderPage();
+      window.addEventListener('resize', function() {
+        var nextPageSize = calculatePageSize();
+        if (nextPageSize !== pageSize) {
+          pageSize = nextPageSize;
+          renderPage();
+        }
+      });
     }).catch(function(err) {
       grid.innerHTML =
         '<div class="empty-state" style="grid-column: 1/-1">' +
