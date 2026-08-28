@@ -287,6 +287,14 @@ nav a:hover, nav button:hover {
   animation: fadeIn 0.2s ease;
 }
 
+#view-overlay {
+  display: none;
+}
+
+#view-overlay.show {
+  display: flex;
+}
+
 .modal-content {
   background: var(--blanco);
   border-radius: var(--radio);
