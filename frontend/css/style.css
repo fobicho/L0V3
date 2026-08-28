@@ -906,7 +906,7 @@ nav a:hover, nav button:hover {
   .panel-card-actions .btn { flex: 1 1 0; min-width: 0; padding: 7px 4px; font-size: 0.68rem; }
   .panel-header { flex-wrap: wrap; }
   .panel-actions { width: 100%; }
-  .container-admin { height: 100vh; overflow-y: auto; overflow-x: hidden; padding: 0 16px 82px; }
+  .container-admin { height: 100vh; overflow: hidden; overflow-x: hidden; padding: 0 16px 82px; }
   .modal { max-width: 340px; padding: 18px 16px; }
   .modal h3 { font-size: 1.05rem; margin-bottom: 12px; }
   .admin-modal-overlay .form-group label { font-size: 0.75rem; }
