@@ -1238,3 +1238,30 @@ nav a:hover, nav button:hover {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Mobile viewport: prevent page-level scrolling on Inicio and Buzón. */
+@media (max-width: 768px) {
+  html,
+  body {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  body {
+    position: fixed !important;
+    inset: 0;
+  }
+
+  .content {
+    position: fixed !important;
+    inset: 0;
+    width: 100%;
+    height: 100dvh !important;
+    max-height: 100dvh;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+}
