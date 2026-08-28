@@ -824,7 +824,7 @@ nav a:hover, nav button:hover {
 
 #modal-overlay .form-group textarea {
   min-height: clamp(180px, 32vh, 380px);
-  resize: vertical;
+  resize: none;
 }
 
 .view-content {
