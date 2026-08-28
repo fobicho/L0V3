@@ -5,7 +5,7 @@ const ADMIN_SECRET = Deno.env.get("ADMIN_SECRET")!;
 const JWT_SECRET = Deno.env.get("JWT_SECRET")!;
 
 const ALLOWED_ORIGINS = new Set([
-  "https://cartas-elp.pages.dev",
+  "https://cartas.fobicho.tech",
   "http://localhost:3000",
 ]);
 
@@ -14,7 +14,7 @@ function getCorsHeaders(req: Request): Record<string, string> {
   return {
     "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.has(origin)
       ? origin
-      : "https://cartas-elp.pages.dev",
+      : "https://cartas.fobicho.tech",
     "Access-Control-Allow-Headers":
       "authorization, x-client-info, apikey, content-type",
     "Vary": "Origin",
