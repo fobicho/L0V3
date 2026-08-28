@@ -71,10 +71,11 @@ window.loadLetters = function() {
     var columns = styles.gridTemplateColumns.split(' ').length;
     var gap = parseFloat(styles.rowGap) || parseFloat(styles.gap) || 0;
     var cardHeight = sample.getBoundingClientRect().height;
-    var gridHeight = grid.parentElement.getBoundingClientRect().height;
+    var listTop = grid.getBoundingClientRect().top;
     var verticalPadding = (parseFloat(styles.paddingTop) || 0) + (parseFloat(styles.paddingBottom) || 0);
-    var paginationSpace = 76;
-    var rows = Math.floor((gridHeight - verticalPadding - paginationSpace + gap) / (cardHeight + gap));
+    var paginationSpace = 96;
+    var availableHeight = window.innerHeight - listTop - paginationSpace;
+    var rows = Math.floor((availableHeight - verticalPadding + gap) / (cardHeight + gap));
     return Math.max(1, columns * Math.max(1, rows));
   }
 
