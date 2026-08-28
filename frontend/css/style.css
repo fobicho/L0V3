@@ -322,6 +322,27 @@ nav a:hover, nav button:hover {
   color: var(--texto-claro);
 }
 
+/* Responsive home message */
+.content-inner:not(.content-inner--top) .empty-state {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 60px) clamp(16px, 4vw, 40px);
+}
+
+.content-inner:not(.content-inner--top) .empty-state h3 {
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+}
+
+.content-inner:not(.content-inner--top) .empty-state-emoji {
+  font-size: clamp(2rem, 7vw, 3rem);
+}
+
+.content-inner:not(.content-inner--top) .empty-state p {
+  font-size: clamp(0.78rem, 1.8vw, 1rem);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
 /* Login */
 .login-container {
   position: fixed;
@@ -910,6 +931,7 @@ nav a:hover, nav button:hover {
   .modal-overlay, .admin-modal-overlay { touch-action: auto; }
   .content-inner { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
   .content-inner--top { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
+  .content-inner:not(.content-inner--top) .empty-state p br { display: none; }
   .content::-webkit-scrollbar { display: none; }
   .content-inner .user-pagination { width: max-content; max-width: calc(100vw - 32px); left: 50%; right: auto; transform: translateX(-50%); box-sizing: border-box; justify-content: center; }
 }
