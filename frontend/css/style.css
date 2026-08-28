@@ -929,8 +929,8 @@ nav a:hover, nav button:hover {
   .panel-actions { width: 100%; }
   .container-admin { height: 100vh; overflow: hidden; overflow-x: hidden; padding: 0 16px 82px; }
   .modal { max-width: 340px; padding: 18px 16px; }
-  #modal-overlay .modal { width: calc(100vw - 32px); max-width: 520px; max-height: calc(100dvh - 32px); }
-  #modal-overlay .form-group textarea { min-height: 120px; }
+  #modal-overlay .modal { width: calc(100vw - 32px); max-width: 520px; max-height: calc(100dvh - 24px); }
+  #modal-overlay .form-group textarea { min-height: clamp(220px, 42dvh, 420px); }
   .modal h3 { font-size: 1.05rem; margin-bottom: 12px; }
   .admin-modal-overlay .form-group label { font-size: 0.75rem; }
   .admin-modal-overlay .form-group input,
