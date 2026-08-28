@@ -816,6 +816,17 @@ nav a:hover, nav button:hover {
   min-height: 90px;
 }
 
+#modal-overlay .modal {
+  width: clamp(320px, 72vw, 760px);
+  max-width: 760px;
+  max-height: min(90vh, 760px);
+}
+
+#modal-overlay .form-group textarea {
+  min-height: clamp(180px, 32vh, 380px);
+  resize: vertical;
+}
+
 .view-content {
   margin-top: 14px;
   padding: 16px;
@@ -918,6 +929,8 @@ nav a:hover, nav button:hover {
   .panel-actions { width: 100%; }
   .container-admin { height: 100vh; overflow: hidden; overflow-x: hidden; padding: 0 16px 82px; }
   .modal { max-width: 340px; padding: 18px 16px; }
+  #modal-overlay .modal { width: calc(100vw - 32px); max-width: 520px; max-height: calc(100dvh - 32px); }
+  #modal-overlay .form-group textarea { min-height: 120px; }
   .modal h3 { font-size: 1.05rem; margin-bottom: 12px; }
   .admin-modal-overlay .form-group label { font-size: 0.75rem; }
   .admin-modal-overlay .form-group input,
