@@ -714,6 +714,11 @@ nav a:hover, nav button:hover {
   margin-bottom: 4px;
   overflow-wrap: break-word;
   word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .panel-card-preview {
@@ -942,6 +947,7 @@ nav a:hover, nav button:hover {
   .content-inner { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
   .content-inner--top { height: calc(100dvh - 104px); min-height: 0; overflow: hidden; }
   .content-inner:not(.content-inner--top) .empty-state p br { display: none; }
+  .content-inner:not(.content-inner--top) .empty-state { transform: translateY(-18px); }
   .content::-webkit-scrollbar { display: none; }
   .content-inner .user-pagination { width: max-content; max-width: calc(100vw - 32px); left: 50%; right: auto; transform: translateX(-50%); box-sizing: border-box; justify-content: center; }
 }
