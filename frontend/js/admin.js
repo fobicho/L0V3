@@ -216,6 +216,11 @@ function openView(id) {
     '<div class="letter-footer"><div class="letter-divider"></div><span class="letter-date">' +
     escapeHTML(formatDateTime(letter.created_at)) + '</span></div></div>';
   document.getElementById('view-overlay').classList.add('show');
+  const overlay = document.getElementById('view-overlay');
+  overlay.scrollTop = 0;
+  overlay.querySelectorAll('.modal-content, .modal-body').forEach((element) => {
+    element.scrollTop = 0;
+  });
 }
 
 function closeView() {
