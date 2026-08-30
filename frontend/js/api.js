@@ -102,7 +102,9 @@ function logout() {
 function parseJWT(token) {
   try {
     const payload = token.split('.')[1];
-    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+    if (!payload) return null;
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(atob(base64 + '='.repeat((4 - base64.length % 4) % 4)));
   } catch {
     return null;
   }

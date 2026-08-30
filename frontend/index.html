@@ -1,5 +1,5 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Buzón</title>
 <script>
-(function(){var token=localStorage.getItem('token'),role=null;try{var p=JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));if(p.exp*1000>Date.now())role=p.role;}catch(_){}if(role==='admin')location.replace('/admin');else if(role==='user')location.replace('/inicio.html');else{try{sessionStorage.setItem('redirectAfterLogin','/inicio.html')}catch(_){}location.replace('/login')}}());
+(function(){var token=localStorage.getItem('token'),role=null;try{var b=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');var p=JSON.parse(atob(b+'='.repeat((4-b.length%4)%4)));if(p.exp*1000>Date.now())role=p.role;}catch(_){}if(role==='admin')location.replace('/admin');else if(role==='user')location.replace('/inicio.html');else{try{sessionStorage.setItem('redirectAfterLogin','/inicio.html')}catch(_){}location.replace('/login')}}());
 </script></head><body></body></html>
