@@ -2,6 +2,8 @@ window.openLetterModal = function(id) {
   markLetterRead(id).catch(function() {});
   var badge = document.querySelector('.card[data-letter-id="' + id + '"] .card-badge');
   if (badge) badge.remove();
+  var card = document.querySelector('.card[data-letter-id="' + id + '"]');
+  if (card) card.classList.remove('card-new');
 
   var overlay = document.createElement('div');
   overlay.className = 'modal-overlay';

@@ -885,6 +885,12 @@ nav a:hover, nav button:hover {
   justify-content: center;
 }
 
+.confirm-actions .btn {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 170px;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
