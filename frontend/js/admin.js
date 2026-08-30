@@ -212,7 +212,7 @@ function openView(id) {
     escapeHTML(letter.title) + '</h1><div class="letter-divider"></div></div>' +
     '<div class="letter-content">' + escapeHTML(letter.content) + '</div>' +
     ((letter.images && letter.images.length) ? '<div class="letter-gallery">' + letter.images.map(src =>
-      '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="">').join('') + '</div>' : '') +
+      '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="Ampliar foto">').join('') + '</div>' : '') +
     '<div class="letter-footer"><div class="letter-divider"></div><span class="letter-date">' +
     escapeHTML(formatDateTime(letter.created_at)) + '</span></div></div>';
   document.getElementById('view-overlay').classList.add('show');

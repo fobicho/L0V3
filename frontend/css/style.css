@@ -1293,6 +1293,56 @@ nav a:hover, nav button:hover {
   to { transform: rotate(360deg); }
 }
 
+.gallery-img { cursor: zoom-in; }
+
+.image-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(40, 20, 35, 0.86);
+}
+
+.image-viewer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: min(94vw, 1100px);
+  max-height: 94vh;
+}
+
+.image-viewer img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(94vh - 72px);
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.35);
+}
+
+.image-viewer-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.image-download { text-decoration: none; }
+
 /* Mobile viewport: prevent page-level scrolling on Inicio and Buzón. */
 @media (max-width: 768px) {
   html,

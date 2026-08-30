@@ -46,7 +46,7 @@
             <div class="letter-content">${escapeHTML(data.content)}</div>
             ${data.images && data.images.length
               ? '<div class="letter-gallery">' + data.images.map(src =>
-                  '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="">').join('') + '</div>'
+                  '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="Ampliar foto">').join('') + '</div>'
               : ''}
             <div class="letter-footer">
               <div class="letter-divider"></div>

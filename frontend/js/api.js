@@ -32,6 +32,34 @@ function escapeHTML(value) {
     .replace(/'/g, '&#39;');
 }
 
+function openImageViewer(src) {
+  if (!src) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'image-viewer-overlay';
+  overlay.innerHTML = '<div class="image-viewer" role="dialog" aria-modal="true" aria-label="Imagen ampliada">' +
+    '<button type="button" class="image-viewer-close" aria-label="Cerrar">×</button>' +
+    '<img src="' + escapeHTML(src) + '" alt="Imagen ampliada">' +
+    '<a class="btn btn-secondary image-download" href="' + escapeHTML(src) + '" download>Descargar foto</a>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  function close() {
+    overlay.remove();
+    document.removeEventListener('keydown', onKeyDown);
+  }
+  function onKeyDown(event) {
+    if (event.key === 'Escape') close();
+  }
+  overlay.addEventListener('click', function(event) {
+    if (event.target === overlay || event.target.closest('.image-viewer-close')) close();
+  });
+  document.addEventListener('keydown', onKeyDown);
+}
+
+document.addEventListener('click', function(event) {
+  const image = event.target.closest('.gallery-img');
+  if (image) openImageViewer(image.getAttribute('src'));
+});
+
 function logout() {
   clearToken();
   sessionStorage.removeItem('role');

@@ -38,7 +38,7 @@ window.openLetterModal = function(id) {
            '<div class="letter-content">' + escapeHTML(letter.content) + '</div>' +
            (letter.images && letter.images.length
              ? '<div class="letter-gallery">' + letter.images.map(function (src) {
-                 return '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="">';
+                 return '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="Ampliar foto">';
                }).join('') + '</div>'
              : '') +
            '<div class="letter-footer">' +
