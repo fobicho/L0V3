@@ -168,6 +168,21 @@ nav a:hover, nav button:hover {
   border-color: var(--rosa-claro);
 }
 
+@keyframes new-card-border {
+  0%, 100% {
+    border-color: transparent;
+    box-shadow: 0 4px 20px var(--sombra);
+  }
+  50% {
+    border-color: var(--rosa-claro);
+    box-shadow: 0 4px 20px var(--sombra), 0 0 14px var(--rosa-claro);
+  }
+}
+
+.card-new {
+  animation: new-card-border 1.8s ease-in-out infinite;
+}
+
 .card-envelope {
   font-size: 2.5rem;
   transition: transform 0.3s ease;

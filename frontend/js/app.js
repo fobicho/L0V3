@@ -101,7 +101,7 @@ window.loadLetters = function() {
     grid.classList.toggle('is-empty', allLetters.length === 0);
     grid.innerHTML = pageLetters.map(function(letter) {
       var read = letter.is_read === true;
-      return '<div class="card" data-letter-id="' + letter.id + '">' +
+      return '<div class="card' + (!read ? ' card-new' : '') + '" data-letter-id="' + letter.id + '">' +
         '<img class="brand-icon card-envelope" src="../icon.png" alt="">' +
         (!read ? '<div class="card-badge">¡Nueva!</div>' : '') + '</div>';
     }).join('');
