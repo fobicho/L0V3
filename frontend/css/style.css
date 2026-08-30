@@ -1219,7 +1219,7 @@ nav a:hover, nav button:hover {
 /* Letter gallery */
 .letter-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   justify-content: center;
   align-items: center;
   gap: 8px;
@@ -1228,9 +1228,9 @@ nav a:hover, nav button:hover {
 
 .gallery-img {
   width: 100%;
-  max-width: 140px;
-  max-height: 140px;
-  height: 140px;
+  max-width: 180px;
+  max-height: 180px;
+  height: 180px;
   justify-self: center;
   object-fit: contain;
   border-radius: 10px;
