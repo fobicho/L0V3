@@ -79,6 +79,16 @@ function openImageViewer(src) {
   document.addEventListener('keydown', onKeyDown);
 }
 
+async function markLetterRead(id) {
+  await fetch(LETTERS_FUNCTION_URL + '/' + encodeURIComponent(id) + '/read', {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + getToken()
+    }
+  });
+}
+
 document.addEventListener('click', function(event) {
   const image = event.target.closest('.gallery-img');
   if (image) openImageViewer(image.getAttribute('src'));

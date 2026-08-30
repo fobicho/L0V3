@@ -1,5 +1,6 @@
 window.openLetterModal = function(id) {
   localStorage.setItem('read_' + id, '1');
+  markLetterRead(id).catch(function() {});
   var badge = document.querySelector('.card[data-letter-id="' + id + '"] .card-badge');
   if (badge) badge.remove();
 
@@ -100,7 +101,7 @@ window.loadLetters = function() {
     var pageLetters = allLetters.slice((currentPage - 1) * pageSize, currentPage * pageSize);
     grid.classList.toggle('is-empty', allLetters.length === 0);
     grid.innerHTML = pageLetters.map(function(letter) {
-      var read = localStorage.getItem('read_' + letter.id) === '1';
+      var read = letter.is_read === true || localStorage.getItem('read_' + letter.id) === '1';
       return '<div class="card" data-letter-id="' + letter.id + '">' +
         '<img class="brand-icon card-envelope" src="../icon.png" alt="">' +
         (!read ? '<div class="card-badge">¡Nueva!</div>' : '') + '</div>';

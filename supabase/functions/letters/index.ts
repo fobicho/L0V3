@@ -208,6 +208,24 @@ serve(async (req: Request): Promise<Response> => {
       ? pathParts[lettersIndex + 1]
       : null;
 
+    if (req.method === "POST" && pathParts[lettersIndex + 1] && pathParts[lettersIndex + 2] === "read") {
+      const letterId = pathParts[lettersIndex + 1];
+      const { error, status } = await supabaseRequest("letter_reads", "POST", {
+        letter_id: letterId,
+        reader_role: payload.role,
+      });
+      if (error && !error.includes("duplicate key")) {
+        return new Response(JSON.stringify({ error }), {
+          status,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 201,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     if (req.method === "GET") {
       const path = resourceId
         ? `letters?id=eq.${encodeURIComponent(resourceId)}&select=id,title,content,mood,images,created_at,updated_at`
@@ -224,6 +242,16 @@ serve(async (req: Request): Promise<Response> => {
           status: 404,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
+      }
+      if (!resourceId && Array.isArray(data)) {
+        const reads = await supabaseRequest(
+          `letter_reads?reader_role=eq.${payload.role}&select=letter_id`,
+          "GET"
+        );
+        const readIds = new Set(
+          Array.isArray(reads.data) ? reads.data.map((row) => row.letter_id) : []
+        );
+        for (const letter of data) letter.is_read = readIds.has(letter.id);
       }
       return new Response(JSON.stringify(resourceId ? data[0] : data), {
         headers: { "Content-Type": "application/json", ...corsHeaders },

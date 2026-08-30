@@ -11,6 +11,15 @@ CREATE TABLE letters (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS letter_reads (
+  letter_id UUID NOT NULL REFERENCES letters(id) ON DELETE CASCADE,
+  reader_role TEXT NOT NULL CHECK (reader_role IN ('user', 'admin')),
+  read_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (letter_id, reader_role)
+);
+
+ALTER TABLE letter_reads ENABLE ROW LEVEL SECURITY;
+
 CREATE TABLE IF NOT EXISTS login_attempts (
   client_key TEXT PRIMARY KEY,
   attempt_count INT NOT NULL DEFAULT 0,
