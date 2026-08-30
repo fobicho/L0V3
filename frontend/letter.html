@@ -31,7 +31,6 @@
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
       if (!id) { window.location.href = '/cartas'; return; }
-      localStorage.setItem('read_' + id, '1');
       markLetterRead(id).catch(function() {});
 
       const container = document.getElementById('letter-content');
