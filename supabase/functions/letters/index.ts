@@ -4,12 +4,24 @@ const PROJECT_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const JWT_SECRET = Deno.env.get("JWT_SECRET")!;
 
+const ALLOWED_ORIGINS = new Set(["https://cartas.fobicho.tech", "http://localhost:3000"]);
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://cartas.fobicho.tech",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 };
+
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get("Origin");
+  return {
+    ...corsHeaders,
+    "Access-Control-Allow-Origin": origin && ALLOWED_ORIGINS.has(origin)
+      ? origin
+      : "https://cartas.fobicho.tech",
+    "Vary": "Origin",
+  };
+}
 
 function base64urlDecode(str: string): Uint8Array {
   const b64 = str.replace(/-/g, "+").replace(/_/g, "/");
@@ -20,6 +32,9 @@ function base64urlDecode(str: string): Uint8Array {
 async function verifyJWT(token: string): Promise<Record<string, unknown> | null> {
   try {
     const [headerB64, bodyB64, sigB64] = token.split(".");
+    if (!headerB64 || !bodyB64 || !sigB64) return null;
+    const header = JSON.parse(new TextDecoder().decode(base64urlDecode(headerB64)));
+    if (header.alg !== "HS256" || header.typ !== "JWT") return null;
     const key = await crypto.subtle.importKey(
       "raw",
       new TextEncoder().encode(JWT_SECRET),
@@ -35,7 +50,9 @@ async function verifyJWT(token: string): Promise<Record<string, unknown> | null>
     );
     if (!valid) return null;
     const payload = JSON.parse(new TextDecoder().decode(base64urlDecode(bodyB64)));
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+    const now = Math.floor(Date.now() / 1000);
+    if (typeof payload.exp !== "number" || payload.exp <= now) return null;
+    if (payload.role !== "admin" && payload.role !== "user") return null;
     return payload;
   } catch {
     return null;
@@ -69,6 +86,11 @@ async function supabaseRequest(
 const BUCKET = "letter-images";
 const MAX_IMAGES = 10;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_TITLE_LENGTH = 200;
+const MAX_CONTENT_LENGTH = 20000;
+const MAX_MOOD_LENGTH = 50;
+const MAX_REQUEST_BYTES = 256 * 1024;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function storagePathFromUrl(urlStr: string | null): string | null {
   if (!urlStr) return null;
@@ -186,8 +208,16 @@ function sanitizeImages(images: unknown): string[] | null {
 }
 
 serve(async (req: Request): Promise<Response> => {
+  const responseCorsHeaders = getCorsHeaders(req);
+  const contentLength = Number(req.headers.get("content-length") || 0);
+  if (contentLength > MAX_REQUEST_BYTES) {
+    return new Response(JSON.stringify({ error: "Solicitud demasiado grande" }), {
+      status: 413,
+      headers: { "Content-Type": "application/json", ...responseCorsHeaders },
+    });
+  }
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: responseCorsHeaders });
   }
 
   try {
@@ -243,6 +273,12 @@ serve(async (req: Request): Promise<Response> => {
     const resourceId = (lettersIndex !== -1 && lettersIndex < pathParts.length - 1)
       ? pathParts[lettersIndex + 1]
       : null;
+    if (resourceId && !UUID_PATTERN.test(resourceId)) {
+      return new Response(JSON.stringify({ error: "Identificador inválido" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
     if (req.method === "POST" && pathParts[lettersIndex + 1] && pathParts[lettersIndex + 2] === "read") {
       const letterId = pathParts[lettersIndex + 1];
@@ -330,16 +366,22 @@ serve(async (req: Request): Promise<Response> => {
 
     if (req.method === "POST" && !resourceId) {
       const { title, content, mood, images } = await req.json();
-      if (!title || !content) {
+      if (typeof title !== "string" || typeof content !== "string"
+        || !title.trim() || !content.trim()
+        || title.trim().length > MAX_TITLE_LENGTH
+        || content.length > MAX_CONTENT_LENGTH
+        || (mood !== undefined && mood !== null
+          && (typeof mood !== "string" || mood.length > MAX_MOOD_LENGTH))
+        || (images !== undefined && !Array.isArray(images))) {
         return new Response(
-          JSON.stringify({ error: "title y content son requeridos" }),
+          JSON.stringify({ error: "Datos de carta inválidos" }),
           { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
       }
       const imagesArr = sanitizeImages(images) ?? [];
       const { data, error, status } = await supabaseRequest("letters", "POST", {
-        title,
-        content,
+        title: title.trim(),
+        content: content.trim(),
         mood: mood || null,
         images: imagesArr,
       });
@@ -360,6 +402,16 @@ serve(async (req: Request): Promise<Response> => {
       if (typeof body.title !== "string" || !body.title.trim()
         || typeof body.content !== "string" || !body.content.trim()) {
         return new Response(JSON.stringify({ error: "title y content son requeridos" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      if (body.title.trim().length > MAX_TITLE_LENGTH
+        || body.content.length > MAX_CONTENT_LENGTH
+        || (body.mood !== undefined && body.mood !== null
+          && (typeof body.mood !== "string" || body.mood.length > MAX_MOOD_LENGTH))
+        || (body.images !== undefined && !Array.isArray(body.images))) {
+        return new Response(JSON.stringify({ error: "Datos de carta inválidos" }), {
           status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
