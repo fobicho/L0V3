@@ -210,7 +210,11 @@ function sanitizeImages(images: unknown): string[] | null {
 serve(async (req: Request): Promise<Response> => {
   const responseCorsHeaders = getCorsHeaders(req);
   const contentLength = Number(req.headers.get("content-length") || 0);
-  if (contentLength > MAX_REQUEST_BYTES) {
+  const isUploadRequest = new URL(req.url).pathname.endsWith("/upload");
+  const maxRequestBytes = isUploadRequest
+    ? MAX_IMAGE_BYTES + 1024 * 1024
+    : MAX_REQUEST_BYTES;
+  if (contentLength > maxRequestBytes) {
     return new Response(JSON.stringify({ error: "Solicitud demasiado grande" }), {
       status: 413,
       headers: { "Content-Type": "application/json", ...responseCorsHeaders },
