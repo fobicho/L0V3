@@ -51,7 +51,7 @@
       try { sessionStorage.removeItem('redirectAfterLogin'); } catch {}
       window.location.href = target;
     } else {
-      window.location.href = '/inicio.html';
+      window.location.href = '/inicio';
     }
   }
 
@@ -62,7 +62,7 @@
     if (data.role === 'admin') {
       window.location.href = target && target.startsWith('/admin') ? target : '/admin';
     } else {
-      window.location.href = target && !target.startsWith('/admin') ? target : '/inicio.html';
+      window.location.href = target && !target.startsWith('/admin') ? target : '/inicio';
     }
   }
 
