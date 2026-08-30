@@ -893,8 +893,8 @@ nav a:hover, nav button:hover {
   font-weight: 700;
   font-size: 1rem;
   line-height: normal;
-  padding: 12px 32px;
-  height: 56px;
+  padding: 8px 32px;
+  height: 48px;
 }
 
 /* Scrollbar */
