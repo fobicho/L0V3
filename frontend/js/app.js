@@ -31,24 +31,7 @@ window.openLetterModal = function(id) {
   apiRead('/' + encodeURIComponent(id))
     .then(function(letter) {
       var body = overlay.querySelector('.modal-body');
-       body.innerHTML =
-         '<div class="letter-paper">' +
-           '<div class="letter-header">' +
-             '<h1 class="letter-title">' + escapeHTML(letter.title) + '</h1>' +
-             '<div class="letter-divider"></div>' +
-           '</div>' +
-           '<div class="letter-content">' + escapeHTML(letter.content) + '</div>' +
-           (letter.images && letter.images.length
-             ? '<div class="letter-gallery">' + letter.images.map(function (src) {
-                 return '<img class="gallery-img" src="' + escapeHTML(src) + '" alt="Ampliar foto">';
-               }).join('') + '</div>'
-             : '') +
-           '<div class="letter-footer">' +
-             '<div class="letter-divider"></div>' +
-             '<span class="letter-date">' + formatDateTime(letter.created_at) + '</span>' +
-           '</div>' +
-         '</div>' +
-         '<div class="modal-actions"><button type="button" class="btn btn-secondary modal-close-btn">Cerrar</button></div>';
+       body.innerHTML = renderLetter(letter, true);
        body.querySelector('.modal-close-btn').addEventListener('click', closeModal);
     }).catch(function(err) {
       overlay.querySelector('.modal-body').innerHTML =
