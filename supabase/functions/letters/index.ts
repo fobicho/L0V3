@@ -74,7 +74,36 @@ function storagePathFromUrl(urlStr: string | null): string | null {
   if (!urlStr) return null;
   const marker = `/object/public/${BUCKET}/`;
   const i = urlStr.indexOf(marker);
-  return i === -1 ? null : urlStr.slice(i + marker.length);
+  if (i !== -1) return urlStr.slice(i + marker.length);
+  if (/^[a-zA-Z0-9][a-zA-Z0-9/_.-]*$/.test(urlStr)) return urlStr;
+  return null;
+}
+
+async function createSignedUrl(path: string): Promise<string | null> {
+  const response = await fetch(
+    `${PROJECT_URL}/storage/v1/object/sign/${BUCKET}/${path}`,
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${SERVICE_ROLE_KEY}`,
+        "apikey": SERVICE_ROLE_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ expiresIn: 3600 }),
+    },
+  );
+  if (!response.ok) return null;
+  const data = await response.json();
+  return data.signedURL ? `${PROJECT_URL}/storage/v1${data.signedURL}` : null;
+}
+
+async function addSignedImageUrls(letter: Record<string, unknown>): Promise<void> {
+  if (!Array.isArray(letter.images)) return;
+  const signed = await Promise.all(letter.images.map(async (image) => {
+    const path = storagePathFromUrl(typeof image === "string" ? image : null);
+    return path ? await createSignedUrl(path) : null;
+  }));
+  letter.images = signed.filter((url): url is string => Boolean(url));
 }
 
 async function handleImageUpload(file: File): Promise<Response> {
@@ -111,8 +140,14 @@ async function handleImageUpload(file: File): Promise<Response> {
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   }
-  const url = `${PROJECT_URL}/storage/v1/object/public/${BUCKET}/${path}`;
-  return new Response(JSON.stringify({ url }), {
+  const signedUrl = await createSignedUrl(path);
+  if (!signedUrl) {
+    return new Response(JSON.stringify({ error: "No se pudo preparar la imagen" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+  return new Response(JSON.stringify({ path, url: signedUrl }), {
     status: 201,
     headers: { "Content-Type": "application/json", ...corsHeaders },
   });
@@ -144,7 +179,8 @@ async function handleImageDelete(urlStr: string | null): Promise<Response> {
 function sanitizeImages(images: unknown): string[] | null {
   if (!Array.isArray(images)) return null;
   const urls = images
-    .filter((u): u is string => typeof u === "string" && u.startsWith("http"))
+    .map((u) => typeof u === "string" ? storagePathFromUrl(u) : null)
+    .filter((u): u is string => Boolean(u))
     .slice(0, MAX_IMAGES);
   return urls;
 }
@@ -253,6 +289,8 @@ serve(async (req: Request): Promise<Response> => {
         );
         for (const letter of data) letter.is_read = readIds.has(letter.id);
       }
+      if (resourceId) await addSignedImageUrls(data[0]);
+      else if (Array.isArray(data)) await Promise.all(data.map(addSignedImageUrls));
       return new Response(JSON.stringify(resourceId ? data[0] : data), {
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });

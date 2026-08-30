@@ -86,15 +86,12 @@ DROP FUNCTION IF EXISTS update_letter_with_history(UUID, TEXT, TEXT, TEXT);
 DROP TABLE IF EXISTS letter_history;
 
 -- Imágenes de cartas (Supabase Storage)
--- Bucket público: las imágenes se leen sin auth (la novia accede con su sesión de usuario).
+-- Bucket privado: las Edge Functions entregan URLs firmadas temporales.
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('letter-images', 'letter-images', true)
-ON CONFLICT (id) DO UPDATE SET public = true;
+VALUES ('letter-images', 'letter-images', false)
+ON CONFLICT (id) DO UPDATE SET public = false;
 
 DROP POLICY IF EXISTS "Public read letter images" ON storage.objects;
-CREATE POLICY "Public read letter images" ON storage.objects
-  FOR SELECT
-  USING (bucket_id = 'letter-images');
 
 -- Permitir que el rol service_role (Edge Function) escriba/borre en el bucket.
 DROP POLICY IF EXISTS "Service role manage letter images" ON storage.objects;

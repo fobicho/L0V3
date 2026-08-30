@@ -111,7 +111,7 @@ async function apiUpload(file) {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Error al subir la imagen');
-  return data.url;
+  return data;
 }
 
 async function apiDeleteImage(url) {
@@ -148,7 +148,7 @@ function renderImagePreview() {
     btn.addEventListener('click', function () {
       const idx = parseInt(btn.getAttribute('data-index'), 10);
       const removed = pendingImages.splice(idx, 1)[0];
-      if (removed && !removed.uploading) apiDeleteImage(removed.url);
+      if (removed && !removed.uploading) apiDeleteImage(removed.path);
       renderImagePreview();
     });
   });
@@ -167,8 +167,9 @@ function setupImageInput() {
       pendingImages.push(entry);
       renderImagePreview();
       try {
-        const url = await apiUpload(file);
-        entry.url = url;
+        const uploaded = await apiUpload(file);
+        entry.path = uploaded.path;
+        entry.url = uploaded.url;
         entry.uploading = false;
       } catch (err) {
         pendingImages.pop();
@@ -211,7 +212,7 @@ document.getElementById('letter-form').addEventListener('submit', async (e) => {
   const body = {
     title: document.getElementById('input-title').value,
     content: document.getElementById('input-content').value,
-    images: pendingImages.filter((i) => !i.uploading).map((i) => i.url)
+    images: pendingImages.filter((i) => !i.uploading).map((i) => i.path)
   };
 
   try {
@@ -227,7 +228,7 @@ document.getElementById('letter-form').addEventListener('submit', async (e) => {
 function cancelModal() {
   pendingImages
     .filter((i) => !i.uploading && i.url)
-    .forEach((i) => apiDeleteImage(i.url));
+    .forEach((i) => apiDeleteImage(i.path));
   pendingImages = [];
   closeModal();
 }
