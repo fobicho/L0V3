@@ -11,7 +11,7 @@
   <style id="auth-visibility">body { visibility: hidden; }</style>
   <script>
     (function () {
-      var token = sessionStorage.getItem('token');
+      var token = localStorage.getItem('token');
       var valid = false;
       try {
         var payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));

@@ -37,6 +37,7 @@
     const payload = parseJWT(token);
     if (!payload || payload.exp * 1000 <= Date.now()) {
       clearToken();
+      localStorage.removeItem('role');
       sessionStorage.removeItem('role');
       return;
     }
