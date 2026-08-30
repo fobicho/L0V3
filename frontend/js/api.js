@@ -39,7 +39,7 @@ function openImageViewer(src) {
   overlay.innerHTML = '<div class="image-viewer" role="dialog" aria-modal="true" aria-label="Imagen ampliada">' +
     '<button type="button" class="image-viewer-close" aria-label="Cerrar">×</button>' +
     '<img src="' + escapeHTML(src) + '" alt="Imagen ampliada">' +
-    '<a class="btn btn-secondary image-download" href="' + escapeHTML(src) + '" download>Descargar foto</a>' +
+    '<button type="button" class="btn btn-secondary image-download">Descargar foto</button>' +
     '</div>';
   document.body.appendChild(overlay);
   function close() {
@@ -51,6 +51,30 @@ function openImageViewer(src) {
   }
   overlay.addEventListener('click', function(event) {
     if (event.target === overlay || event.target.closest('.image-viewer-close')) close();
+  });
+  overlay.querySelector('.image-download').addEventListener('click', async function() {
+    const button = this;
+    button.disabled = true;
+    button.textContent = 'Preparando descarga…';
+    try {
+      const response = await fetch(src, { mode: 'cors' });
+      if (!response.ok) throw new Error('No se pudo descargar la imagen');
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const extension = (blob.type.split('/')[1] || 'jpg').split(';')[0];
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = 'foto-' + Date.now() + '.' + extension;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(function() { URL.revokeObjectURL(objectUrl); }, 1000);
+      button.textContent = 'Descarga iniciada';
+    } catch (error) {
+      button.disabled = false;
+      button.textContent = 'Descargar foto';
+      window.open(src, '_blank', 'noopener');
+    }
   });
   document.addEventListener('keydown', onKeyDown);
 }
