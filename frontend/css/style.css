@@ -889,6 +889,12 @@ nav a:hover, nav button:hover {
   flex: 1 1 0;
   min-width: 0;
   max-width: 170px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: normal;
+  padding: 12px 32px;
+  height: 56px;
 }
 
 /* Scrollbar */
