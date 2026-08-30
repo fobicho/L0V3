@@ -49,21 +49,6 @@ window.loadLetters = function() {
   var pageSize = 1;
   var currentPage = 1;
 
-  function calculatePageSize() {
-    var sample = grid.querySelector('.card');
-    if (!sample) return 1;
-    var styles = window.getComputedStyle(grid);
-    var columns = styles.gridTemplateColumns.split(' ').length;
-    var gap = parseFloat(styles.rowGap) || parseFloat(styles.gap) || 0;
-    var cardHeight = sample.getBoundingClientRect().height;
-    var listTop = grid.getBoundingClientRect().top;
-    var verticalPadding = (parseFloat(styles.paddingTop) || 0) + (parseFloat(styles.paddingBottom) || 0);
-    var paginationSpace = 96;
-    var availableHeight = window.innerHeight - listTop - paginationSpace;
-    var rows = Math.floor((availableHeight - verticalPadding + gap) / (cardHeight + gap));
-    return Math.max(1, columns * Math.max(1, rows));
-  }
-
   function renderPagination(totalPages) {
     var old = document.querySelector('.user-pagination');
     if (old) old.remove();
@@ -98,7 +83,7 @@ window.loadLetters = function() {
       cards[i].addEventListener('click', function() { window.openLetterModal(this.getAttribute('data-letter-id')); });
     }
     renderPagination(totalPages);
-    var measuredPageSize = calculatePageSize();
+    var measuredPageSize = calculatePageSize('#letters-grid', '.card');
     if (allLetters.length && measuredPageSize !== pageSize) {
       pageSize = measuredPageSize;
       renderPage();
@@ -111,7 +96,7 @@ window.loadLetters = function() {
       pageSize = allLetters.length || 1;
       renderPage();
       window.addEventListener('resize', function() {
-        var nextPageSize = calculatePageSize();
+        var nextPageSize = calculatePageSize('#letters-grid', '.card');
         if (nextPageSize !== pageSize) {
           pageSize = nextPageSize;
           renderPage();

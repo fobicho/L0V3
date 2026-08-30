@@ -9,21 +9,6 @@ let pageSize = 1;
 
 const MAX_IMAGES = 10;
 
-function calculatePageSize() {
-  const list = document.getElementById('panel-list');
-  const sample = list && list.querySelector('.panel-card');
-  if (!sample) return 1;
-  const styles = window.getComputedStyle(list);
-  const columns = styles.gridTemplateColumns.split(' ').length;
-  const gap = parseFloat(styles.rowGap) || parseFloat(styles.gap) || 0;
-  const cardHeight = sample.getBoundingClientRect().height;
-  const listTop = list.getBoundingClientRect().top;
-  const paginationSpace = 96;
-  const availableHeight = window.innerHeight - listTop - paginationSpace;
-  const rows = Math.floor((availableHeight + gap) / (cardHeight + gap));
-  return Math.max(1, columns * Math.max(1, rows));
-}
-
 async function loadPanel() {
   const list = document.getElementById('panel-list');
   try {
@@ -70,7 +55,7 @@ async function loadPanel() {
         <button class="btn btn-secondary btn-small" onclick="changePage(1)" ${currentPage === totalPages ? 'disabled' : ''}>Siguiente</button>
       </nav>`);
     }
-    const measuredPageSize = calculatePageSize();
+    const measuredPageSize = calculatePageSize('#panel-list', '.panel-card');
     if (measuredPageSize !== pageSize) {
       pageSize = measuredPageSize;
       loadPanel();
@@ -139,7 +124,7 @@ async function apiDeleteImage(url) {
         'Authorization': 'Bearer ' + token
       }
     });
-  } catch (_) { /* ignore */ }
+  } catch (_) {}
 }
 
 function renderImagePreview() {
@@ -221,22 +206,6 @@ function closeView() {
   document.getElementById('view-overlay').classList.remove('show');
 }
 
-async function apiWrite(path, method, body) {
-  const token = getToken();
-  const res = await fetch(LETTERS_FUNCTION_URL + path, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': 'Bearer ' + token
-    },
-    body: body ? JSON.stringify(body) : undefined
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Error del servidor');
-  return data;
-}
-
 document.getElementById('letter-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const body = {
@@ -297,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (event.target === event.currentTarget) closeView();
   });
   window.addEventListener('resize', function () {
-    const nextPageSize = calculatePageSize();
+    const nextPageSize = calculatePageSize('#panel-list', '.panel-card');
     if (nextPageSize !== pageSize) {
       pageSize = nextPageSize;
       loadPanel();

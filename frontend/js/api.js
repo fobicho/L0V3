@@ -152,3 +152,18 @@ async function apiRead(path) {
   if (!res.ok) throw new Error(data.error || 'Error del servidor');
   return data;
 }
+
+async function apiWrite(path, method, body) {
+  const res = await fetch(LETTERS_FUNCTION_URL + path, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + getToken()
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Error del servidor');
+  return data;
+}

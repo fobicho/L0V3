@@ -1,4 +1,3 @@
-/* Shared login behavior for the user and admin login pages. */
 (function () {
   let pistaCount = 0;
   const pistaBtn = document.getElementById('pista-btn');
@@ -85,4 +84,3 @@
   setupHint();
   redirectIfAuthenticated();
 }());
-
