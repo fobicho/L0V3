@@ -17,7 +17,11 @@
         var payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
         valid = payload.exp * 1000 > Date.now();
       } catch (_) {}
-      if (valid) document.getElementById('auth-visibility').remove();
+      if (valid && payload.role === 'admin') {
+        location.replace('/admin');
+      } else if (valid) {
+        document.getElementById('auth-visibility').remove();
+      }
       else {
         try { sessionStorage.setItem('redirectAfterLogin', location.pathname + location.search); } catch (_) {}
         location.replace('/login');
